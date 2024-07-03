@@ -7,18 +7,27 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Bread: typeof import('./src/components/selectOrgInfo/common/bread.vue')['default']
+    Dept: typeof import('./src/components/selectOrgInfo/leftContent/dept.vue')['default']
+    ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
+    ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCard: typeof import('element-plus/es')['ElCard']
+    ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElDialog: typeof import('element-plus/es')['ElDialog']
+    ElIcon: typeof import('element-plus/es')['ElIcon']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElSpace: typeof import('element-plus/es')['ElSpace']
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     LeftContent: typeof import('./src/components/selectOrgInfo/leftContent/index.vue')['default']
+    ListItem: typeof import('./src/components/selectOrgInfo/common/listItem.vue')['default']
     MainContent: typeof import('./src/components/selectOrgInfo/mainContent.vue')['default']
     RightContent: typeof import('./src/components/selectOrgInfo/rightContent/index.vue')['default']
+    Role: typeof import('./src/components/selectOrgInfo/leftContent/role.vue')['default']
     SelectOrgInfo: typeof import('./src/components/selectOrgInfo/index.vue')['default']
+    Staff: typeof import('./src/components/selectOrgInfo/leftContent/staff.vue')['default']
   }
 }

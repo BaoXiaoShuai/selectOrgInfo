@@ -9,7 +9,7 @@
         <span>{{ props.title || '选择组织' }}</span>
       </div>
     </template>
-    <MainContent />
+    <MainContent/>
     <template #footer>
       <div class="w-full flex justify-between">
         <div></div>
@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 import { SelectOrgInfoProps } from './type.ts';
-import { ref } from 'vue';
+import { ref, provide } from 'vue';
 import { ShowTypeEnum } from './enum';
 import MainContent from './mainContent.vue';
 
@@ -34,6 +34,6 @@ const props = withDefaults(defineProps<SelectOrgInfoProps>(), {
 
 const dialogVisible = ref(props.showType === ShowTypeEnum.dialog)
 
-
-
+console.log(props)
+provide('propsData', props)
 </script>

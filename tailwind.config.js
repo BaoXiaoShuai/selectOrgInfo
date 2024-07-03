@@ -5,7 +5,11 @@ export default {
     extend: {
       height: {
         'less50': "calc(100% - 50px)",
-        'less40': "calc(100% - 40px)"
+        'less40': "calc(100% - 40px)",
+        'less30': "calc(100% - 30px)"
+      },
+      padding: {
+        'px10': "10px"
       }
     },
   },
