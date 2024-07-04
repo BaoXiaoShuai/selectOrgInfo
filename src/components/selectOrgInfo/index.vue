@@ -27,13 +27,17 @@ import { SelectOrgInfoProps } from './type.ts';
 import { ref, provide } from 'vue';
 import { ShowTypeEnum } from './enum';
 import MainContent from './mainContent.vue';
+import { flattenDepartments } from './util'
 
 const props = withDefaults(defineProps<SelectOrgInfoProps>(), {
   showType: ShowTypeEnum.dialog
 });
 
 const dialogVisible = ref(props.showType === ShowTypeEnum.dialog)
-
+// 部门索引信息表
+const deptFlatData = flattenDepartments(props.deptData ? props.deptData?.children: [])
+console.log(deptFlatData)
 console.log(props)
 provide('propsData', props)
+provide('deptFlatData', deptFlatData)
 </script>
