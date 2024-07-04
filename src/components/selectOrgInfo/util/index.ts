@@ -1,5 +1,4 @@
-import { StaffDataType, DeptDataType, SelectOrgInfoProps } from "../type";
-import { inject } from "vue";
+import { StaffDataType, DeptDataType } from "../type";
 
 /**
  * 递归获取当前部门的所有员工数量
