@@ -1,15 +1,15 @@
 <template>
-  <el-dialog v-model="dialogVisible" :title="props.title || '选择组织'" width="800"
+  <el-dialog v-model="dialogVisible" :title="props.title || '选择组织'" :width="(props.width + 32) + 'px'"
     v-if="props.showType === ShowTypeEnum.dialog">
     <MainContent />
   </el-dialog>
-  <el-card size="small" v-else style="width: 800px">
+  <el-card size="small" v-else>
     <template #header>
       <div class="card-header">
         <span>{{ props.title || '选择组织' }}</span>
       </div>
     </template>
-    <MainContent/>
+    <MainContent />
     <template #footer>
       <div class="w-full flex justify-between">
         <div></div>
@@ -27,17 +27,18 @@ import { SelectOrgInfoProps } from './type.ts';
 import { ref, provide } from 'vue';
 import { ShowTypeEnum } from './enum';
 import MainContent from './mainContent.vue';
-import { flattenDepartments } from './util'
+import { flattenDepartments } from './util';
 
 const props = withDefaults(defineProps<SelectOrgInfoProps>(), {
-  showType: ShowTypeEnum.dialog
+  showType: ShowTypeEnum.dialog,
+  width: 800
 });
 
-const dialogVisible = ref(props.showType === ShowTypeEnum.dialog)
+const dialogVisible = ref(props.showType === ShowTypeEnum.dialog);
 // 部门索引信息表
-const deptFlatData = flattenDepartments(props.deptData ? props.deptData?.children: [])
-console.log(deptFlatData)
-console.log(props)
-provide('propsData', props)
-provide('deptFlatData', deptFlatData)
+const deptFlatData = flattenDepartments(props.deptData ? props.deptData?.children : []);
+console.log(deptFlatData);
+console.log(props);
+provide('propsData', props);
+provide('deptFlatData', deptFlatData);
 </script>

@@ -37,6 +37,7 @@ const emit = defineEmits<{
 }>()
 
 const itemClick = () => { 
+  if (props.data.isStaff) return
   emit('itemClick', props.data)
 }
 

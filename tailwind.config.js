@@ -3,6 +3,9 @@ export default {
   content: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      width: {
+        'less1': "calc(100% - 1px)",
+      },
       height: {
         'less50': "calc(100% - 50px)",
         'less40': "calc(100% - 40px)",

@@ -4,14 +4,13 @@ import { StaffDataType, DeptDataType } from "../type";
  * 递归获取当前部门的所有员工数量
  * @param dept 
  * @param staffData 
- * @param count 
  * @returns 
  */
-const getDeptIds = (dept: DeptDataType, staffData: Array<StaffDataType>) => {
+const getDeptStaffCount = (dept: DeptDataType, staffData: Array<StaffDataType>) => {
   let allStaffCount = staffData.filter(staff => staff?.departments?.includes(dept.id)).length;
   if (dept.children && dept.children.length > 0) {
     dept.children.forEach(child => {
-      allStaffCount += getDeptIds(child, staffData);
+      allStaffCount += getDeptStaffCount(child, staffData);
     });
   }
   return allStaffCount;
@@ -21,7 +20,8 @@ const getDeptIds = (dept: DeptDataType, staffData: Array<StaffDataType>) => {
  * 组装当前列表的数据
  * @param id 部门 id
  * @param deptData 部门数据
- * @param staffData 员工数据
+ * @param allStaffData 员工数据
+ * @param deptFlatData 扁平化的部门数据
  */
 export const makeListData = (
   id: string = '', 
@@ -36,7 +36,7 @@ export const makeListData = (
     item.deptNames = deptFlatData?.filter(dept => item?.departments?.includes(dept.id))?.map(dept => dept.name)
   })
   deptData.forEach(item => {
-    item.allStaffCount = getDeptIds(item, allStaffData);
+    item.allStaffCount = getDeptStaffCount(item, allStaffData);
     item.isDept = true
   });
   return deptData.concat(currentStaffList);

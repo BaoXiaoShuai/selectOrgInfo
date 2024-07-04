@@ -36,4 +36,5 @@ export interface SelectOrgInfoProps {
   }>;
   staffData?: Array<StaffDataType>;
   deptData?: DeptDataType;
+  width?: number
 }
