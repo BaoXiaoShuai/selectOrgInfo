@@ -1,12 +1,12 @@
 <template>
   <el-avatar v-if="data.isDept" :class="primaryClass" :size="size"
-    :icon="ChromeFilled" />
+    :icon="ElementPlus" />
   <el-avatar :size="size" v-else-if="data.isStaff" :icon="UserFilled" />
   <el-avatar v-else :size="size" :class="primaryClass" :icon="Opportunity" />
 </template>
 
 <script setup lang="ts">
-import { ChromeFilled, UserFilled, Opportunity } from '@element-plus/icons-vue';
+import { ElementPlus, UserFilled, Opportunity } from '@element-plus/icons-vue';
 import { ref } from 'vue';
 import { ListItemProps } from './type.ts'
 

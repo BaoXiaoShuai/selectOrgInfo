@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { ref, inject, onMounted } from 'vue';
-import { DeptDataType, SelectOrgInfoProps, StaffDataType } from '../type.ts';
+import { DeptDataType, RoleDataType, SelectOrgInfoProps, StaffDataType } from '../type.ts';
 import ListItem from '../listItem/index.vue';
 import BreadInfo from '../common/bread.vue';
 import { makeListData } from '../util/index.ts';
@@ -50,14 +50,16 @@ const handleCurrentListData = (id: string = '', deptData: Array<DeptDataType> = 
  * 组装面包屑数据
  * @param data 
  */
-const handleBreadDataList = (data: DeptDataType) => {
+const handleBreadDataList = (data: DeptDataType | RoleDataType) => {
   breadDataList.value.push(data);
 };
 
+
 onMounted(() => {
-  // 如果是角色信息，直接进行展示，不用进行处理
-  if(currentProps.type === TabDataEnum.role) {
-    currentListData.value = propsData?.roleData || [];
+  // 如果是角色信息
+  if (currentProps.type === TabDataEnum.role) {
+    handleCurrentListData(propsData?.roleData?.id, propsData?.roleData?.children);
+    propsData?.roleData && handleBreadDataList(propsData?.roleData);
   } else {
     handleCurrentListData(propsData?.deptData?.id, propsData?.deptData?.children);
     propsData?.deptData && handleBreadDataList(propsData?.deptData);

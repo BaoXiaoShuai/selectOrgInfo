@@ -24,7 +24,7 @@ const emit = defineEmits<{
 }>();
 
 const itemClick = () => {
-  if (props.data.isStaff || props.tabData === TabDataEnum.department) return;
+  if (props.data.isStaff || props.tabData !== TabDataEnum.staff) return;
   emit('itemClick', props.data);
 }
 
