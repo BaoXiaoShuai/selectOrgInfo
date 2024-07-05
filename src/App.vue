@@ -6,6 +6,8 @@
         :tab-data="tabData"
         :staff-data="StaffData"
         :dept-data="DeptData"
+        :role-data="RoleData"
+        @tab-change="tabChange"
       />
     </div>
   </el-config-provider>
@@ -17,6 +19,7 @@ import { ShowTypeEnum, TabDataEnum } from './components/selectOrgInfo/enum'
 import SelectOrgInfo from './components/selectOrgInfo/index.vue'
 import StaffData from './mock/staff.json'
 import DeptData from './mock/departments.json'
+import RoleData from './mock/role.json'
 
 const tabData = ref([
   {
@@ -32,5 +35,11 @@ const tabData = ref([
     type: TabDataEnum.role
   }
 ])
+
+const currentType = ref<TabDataEnum>()
+
+const tabChange = (type: TabDataEnum) => {
+  currentType.value = type
+}
 
 </script>

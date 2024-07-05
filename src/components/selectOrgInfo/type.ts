@@ -24,6 +24,17 @@ export interface DeptDataType {
 }
 
 /**
+ * 角色信息
+ */
+export interface RoleDataType {
+  id: string;
+  name: string;
+  children?: Array<RoleDataType>;
+  isRole?: boolean
+  [key: string]: any;
+}
+
+/**
  * 选择组织架构
  */
 export interface SelectOrgInfoProps {
@@ -36,5 +47,6 @@ export interface SelectOrgInfoProps {
   }>;
   staffData?: Array<StaffDataType>;
   deptData?: DeptDataType;
+  roleData?: Array<RoleDataType>;
   width?: number
 }

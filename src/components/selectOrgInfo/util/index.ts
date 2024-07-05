@@ -1,4 +1,5 @@
-import { StaffDataType, DeptDataType } from "../type";
+import { StaffDataType, DeptDataType, RoleDataType } from "../type";
+import { TabDataEnum } from '../enum'
 
 /**
  * 递归获取当前部门的所有员工数量
@@ -19,24 +20,32 @@ const getDeptStaffCount = (dept: DeptDataType, staffData: Array<StaffDataType>) 
 /**
  * 组装当前列表的数据
  * @param id 部门 id
+ * @param type 列表类型
  * @param deptData 部门数据
  * @param allStaffData 员工数据
  * @param deptFlatData 扁平化的部门数据
  */
 export const makeListData = (
   id: string = '', 
+  type: TabDataEnum,
   deptData: Array<DeptDataType> = [], 
   allStaffData: Array<StaffDataType> = [],
   deptFlatData: Array<DeptDataType> = []
  ) => {
-  const currentStaffList = allStaffData.filter(item => item?.departments?.includes(id));
-  // 去部门索引表里拿当前人员所在的部门信息
-  currentStaffList?.forEach(item => {
-    item.isStaff = true
-    item.deptNames = deptFlatData?.filter(dept => item?.departments?.includes(dept.id))?.map(dept => dept.name)
-  })
+  let currentStaffList: Array<StaffDataType> = [];
+  if(type === TabDataEnum.staff) {
+    currentStaffList = allStaffData.filter(item => item?.departments?.includes(id));
+    // 去部门索引表里拿当前人员所在的部门信息
+    currentStaffList?.forEach(item => {
+      item.isStaff = true
+      item.deptNames = deptFlatData?.filter(dept => item?.departments?.includes(dept.id))?.map(dept => dept.name)
+    })
+  }
+  
   deptData.forEach(item => {
-    item.allStaffCount = getDeptStaffCount(item, allStaffData);
+    if(type === TabDataEnum.staff) {
+      item.allStaffCount = getDeptStaffCount(item, allStaffData);
+    }
     item.isDept = true
   });
   return deptData.concat(currentStaffList);

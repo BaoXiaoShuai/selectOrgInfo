@@ -12,7 +12,11 @@
     <MainContent />
     <template #footer>
       <div class="w-full flex justify-between">
-        <div></div>
+        <div>
+          <el-checkbox v-if="currentType === TabDataEnum.department" label="hah" value="hi">
+            部门节点是否关联
+          </el-checkbox>
+        </div>
         <el-space>
           <el-button>取消</el-button>
           <el-button type="primary">确认选择</el-button>
@@ -25,7 +29,7 @@
 <script setup lang="ts">
 import { SelectOrgInfoProps } from './type.ts';
 import { ref, provide } from 'vue';
-import { ShowTypeEnum } from './enum';
+import { ShowTypeEnum, TabDataEnum } from './enum';
 import MainContent from './mainContent.vue';
 import { flattenDepartments } from './util';
 
@@ -34,11 +38,26 @@ const props = withDefaults(defineProps<SelectOrgInfoProps>(), {
   width: 800
 });
 
+const emit = defineEmits<{
+  (e: 'tabChange', type: TabDataEnum): void;
+}>();
+
 const dialogVisible = ref(props.showType === ShowTypeEnum.dialog);
 // 部门索引信息表
 const deptFlatData = flattenDepartments(props.deptData ? props.deptData?.children : []);
-console.log(deptFlatData);
-console.log(props);
+// 当前选中的tab
+const currentType = ref<TabDataEnum>()
+/**
+ * tab 切换后的信息
+ * @param type 
+ */
+const tabChange = (type: TabDataEnum) => {
+  currentType.value = type
+  emit('tabChange', type);
+};
+
+
 provide('propsData', props);
 provide('deptFlatData', deptFlatData);
+provide('tabChange', tabChange);
 </script>

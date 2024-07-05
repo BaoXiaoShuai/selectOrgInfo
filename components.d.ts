@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Avatar: typeof import('./src/components/selectOrgInfo/listItem/avatar.vue')['default']
     Bread: typeof import('./src/components/selectOrgInfo/common/bread.vue')['default']
     Dept: typeof import('./src/components/selectOrgInfo/leftContent/dept.vue')['default']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
@@ -26,11 +27,14 @@ declare module 'vue' {
     ElTag: typeof import('element-plus/es')['ElTag']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     LeftContent: typeof import('./src/components/selectOrgInfo/leftContent/index.vue')['default']
-    ListItem: typeof import('./src/components/selectOrgInfo/common/listItem.vue')['default']
+    ListItem: typeof import('./src/components/selectOrgInfo/listItem/index.vue')['default']
     MainContent: typeof import('./src/components/selectOrgInfo/mainContent.vue')['default']
+    Operate: typeof import('./src/components/selectOrgInfo/listItem/operate.vue')['default']
+    Opetiosn: typeof import('./src/components/selectOrgInfo/listItem/opetiosn.vue')['default']
     RightContent: typeof import('./src/components/selectOrgInfo/rightContent/index.vue')['default']
     Role: typeof import('./src/components/selectOrgInfo/leftContent/role.vue')['default']
     SelectOrgInfo: typeof import('./src/components/selectOrgInfo/index.vue')['default']
     Staff: typeof import('./src/components/selectOrgInfo/leftContent/staff.vue')['default']
+    Title: typeof import('./src/components/selectOrgInfo/listItem/title.vue')['default']
   }
 }
