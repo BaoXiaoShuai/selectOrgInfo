@@ -17,7 +17,7 @@
 import { inject, onMounted, ref } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { SelectOrgInfoProps } from '../type.ts'
-import ListPanel from './staff.vue'
+import ListPanel from './listPanel.vue'
 import { TabDataEnum } from '../enum';
 
 const propsData = inject<SelectOrgInfoProps>('propsData')

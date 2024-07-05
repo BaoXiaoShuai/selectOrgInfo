@@ -49,4 +49,6 @@ export interface SelectOrgInfoProps {
   deptData?: DeptDataType;
   roleData?: RoleDataType;
   width?: number
+  /** 是否多选 */
+  multiple?: boolean
 }

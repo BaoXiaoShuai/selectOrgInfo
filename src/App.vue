@@ -7,6 +7,7 @@
         :staff-data="StaffData"
         :dept-data="DeptData"
         :role-data="RoleData"
+        multiple
         @tab-change="tabChange"
       />
     </div>

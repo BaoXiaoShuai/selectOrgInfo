@@ -1,8 +1,12 @@
 <template>
   <div class="w-full h-full ">
     <BreadInfo v-model:data="breadDataList" @itemClick="changeListData" />
+    <div v-if="showMultiple" class="w-full px-px10 !h-[25px]">
+      <!-- <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange"> -->
+      <el-checkbox class="!h-[25px] flex items-center">全选</el-checkbox>
+    </div>
     <div class="w-full h-less30 overflow-x-hidden overflow-y-auto"
-      :class="{ 'flex justify-center items-center': !currentListData.length }">
+      :class="{ 'flex justify-center items-center': !currentListData.length, '!h-less55' : showMultiple }">
       <template v-for="item in currentListData" :key="item.id">
         <ListItem @item-click="changeListData" :data="item" :tab-data="type" />
       </template>
@@ -12,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject, onMounted } from 'vue';
+import { ref, inject, onMounted, computed } from 'vue';
 import { DeptDataType, RoleDataType, SelectOrgInfoProps, StaffDataType } from '../type.ts';
 import ListItem from '../listItem/index.vue';
 import BreadInfo from '../common/bread.vue';
@@ -38,12 +42,22 @@ const deptFlatData = inject<Array<DeptDataType>>('deptFlatData');
 const currentListData = ref<Array<DeptDataType & StaffDataType>>([]);
 // 面包屑数据信息
 const breadDataList = ref<Array<DeptDataType>>([]);
+// 是否显示多选操作
+const showMultiple = computed(() => {
+  // 员工首页不展示多选
+  // 因为在此基础上，点击部门选择时会把所有的子级员工都选中
+  // 所有在此优化为员工首页不允许进行全部选择的操作
+  if (currentProps.type === TabDataEnum.staff) {
+    return breadDataList.value.length > 1 && propsData?.multiple
+  }
+  return propsData?.multiple
+})
 
 /**
  * 组装当前列表的数据
  */
-const handleCurrentListData = (id: string = '', deptData: Array<DeptDataType> = []) => {
-  currentListData.value = makeListData(id, currentProps.type, deptData, propsData?.staffData, deptFlatData);
+const handleCurrentListData = (id: string = '', listData: Array<DeptDataType | RoleDataType> = []) => {
+  currentListData.value = makeListData(id, currentProps.type, listData, propsData?.staffData, deptFlatData);
 };
 
 /**
@@ -54,13 +68,30 @@ const handleBreadDataList = (data: DeptDataType | RoleDataType) => {
   breadDataList.value.push(data);
 };
 
-
+/**
+ * 初始化
+ */
 onMounted(() => {
-  // 如果是角色信息
+  // 处理不同 tab 下的数据结构
   if (currentProps.type === TabDataEnum.role) {
+    // 角色tab 数据
     handleCurrentListData(propsData?.roleData?.id, propsData?.roleData?.children);
     propsData?.roleData && handleBreadDataList(propsData?.roleData);
+  } else if (currentProps.type === TabDataEnum.department) {
+    // 部门tab 数据
+    let _deptData = propsData?.deptData;
+    _deptData = {
+      id: 'allCompany',
+      name: '公司',
+      children: propsData?.deptData && [propsData?.deptData]
+    };
+    _deptData && handleBreadDataList(_deptData);
+    if (_deptData?.children?.length === 1) {
+      handleBreadDataList(_deptData?.children[0]);
+      handleCurrentListData(_deptData?.children[0].id, _deptData?.children[0].children);
+    }
   } else {
+    // 人员tab 数据
     handleCurrentListData(propsData?.deptData?.id, propsData?.deptData?.children);
     propsData?.deptData && handleBreadDataList(propsData?.deptData);
   }

@@ -1,8 +1,11 @@
 <template>
   <div @click="itemClick"
     class="w-full h-[50px] flex items-center hover:bg-[var(--el-fill-color)] px-px10 text-[14px] cursor-pointer [&>div]:h-full [&>div]:flex [&>div]:items-center">
-    <div v-if="tabData === TabDataEnum.staff && !data.isDept" class="w-[30px] justify-center">
+    <div v-if="multiple" class="w-[25px]">
       <el-checkbox />
+    </div>
+    <div v-if="(tabData !== TabDataEnum.staff && !multiple) || (data.isStaff && !multiple)" class="w-[30px] justify-center">
+      <el-radio />
     </div>
     <Avatar :data="data" :tab-data="tabData" />
     <Title :data="data" :tab-data="tabData" />
@@ -12,11 +15,16 @@
 
 <script setup lang="ts">
 import { TabDataEnum } from '../enum';
-import { DeptDataType, StaffDataType } from '../type';
+import { DeptDataType, StaffDataType, SelectOrgInfoProps } from '../type';
 import Avatar from './avatar.vue';
 import Title from './title.vue';
 import Operate from './operate.vue';
 import { ListItemProps } from './type.ts';
+import { inject, computed } from 'vue';
+
+const propsData = inject<SelectOrgInfoProps>('propsData')
+
+const multiple = computed(() => propsData?.multiple || false);
 
 const props = defineProps<ListItemProps>();
 const emit = defineEmits<{

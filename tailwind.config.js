@@ -9,7 +9,8 @@ export default {
       height: {
         'less50': "calc(100% - 50px)",
         'less40': "calc(100% - 40px)",
-        'less30': "calc(100% - 30px)"
+        'less30': "calc(100% - 30px)",
+        'less55': "calc(100% - 55px)",
       },
       padding: {
         'px10': "10px"

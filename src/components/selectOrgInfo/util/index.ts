@@ -21,14 +21,14 @@ const getDeptStaffCount = (dept: DeptDataType, staffData: Array<StaffDataType>) 
  * 组装当前列表的数据
  * @param id 部门 id
  * @param type 列表类型
- * @param deptData 部门数据
+ * @param listData 部门数据 / 角色数据
  * @param allStaffData 员工数据
  * @param deptFlatData 扁平化的部门数据
  */
 export const makeListData = (
   id: string = '', 
   type: TabDataEnum,
-  deptData: Array<DeptDataType> = [], 
+  listData: Array<DeptDataType> = [], 
   allStaffData: Array<StaffDataType> = [],
   deptFlatData: Array<DeptDataType> = []
  ) => {
@@ -42,13 +42,19 @@ export const makeListData = (
     })
   }
   
-  deptData.forEach(item => {
+  listData.forEach(item => {
     if(type === TabDataEnum.staff) {
       item.allStaffCount = getDeptStaffCount(item, allStaffData);
+      item.isDept = true
     }
-    item.isDept = true
+    if(type === TabDataEnum.department) {
+      item.isDept = true
+    }
+    if(type === TabDataEnum.role) {
+      item.isRole = true
+    }
   });
-  return deptData.concat(currentStaffList);
+  return listData.concat(currentStaffList);
 };
 
 /**
