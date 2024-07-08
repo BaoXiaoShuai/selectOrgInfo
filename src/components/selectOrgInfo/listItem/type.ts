@@ -3,5 +3,6 @@ import { DeptDataType, StaffDataType, RoleDataType } from '../type';
 
 export interface ListItemProps {
   data: StaffDataType | DeptDataType | RoleDataType
-  tabData: TabDataEnum
+  tabData?: TabDataEnum
+  isResultShow?: boolean
 }

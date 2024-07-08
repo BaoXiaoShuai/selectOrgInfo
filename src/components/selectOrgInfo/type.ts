@@ -19,7 +19,10 @@ export interface DeptDataType {
   name: string;
   children?: Array<DeptDataType>;
   allStaffCount?: number
+  allStaffList?: Array<StaffDataType>
+  allStaffIds?: Array<string>
   isDept?: boolean
+  deptPath?: string
   [key: string]: any;
 }
 
@@ -50,5 +53,5 @@ export interface SelectOrgInfoProps {
   roleData?: RoleDataType;
   width?: number
   /** 是否多选 */
-  multiple?: boolean
+  multiple: boolean
 }

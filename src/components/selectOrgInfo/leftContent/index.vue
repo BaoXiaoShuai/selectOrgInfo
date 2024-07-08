@@ -5,7 +5,7 @@
     </div>
     <el-tabs v-model="defaultTab" @tab-change="tabChange" class="h-less50 w-full [&>div:first-child]:px-px10 [&>div:first-child]:m-0 [&>div:nth-child(2)]:h-less40 [&>div:nth-child(2)]:w-full">
       <template v-for="item in propsData?.tabData" :key="item.type">
-        <el-tab-pane class="h-full w-full" :label="item.label" :name="item.type">
+        <el-tab-pane lazy class="h-full w-full" :label="item.label" :name="item.type">
           <ListPanel :type="item.type" />
         </el-tab-pane>
       </template>

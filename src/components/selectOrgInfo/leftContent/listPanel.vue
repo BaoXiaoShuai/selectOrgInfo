@@ -37,7 +37,7 @@ const currentProps = withDefaults(defineProps<IProps>(), {
 // 整体的 props 数据
 const propsData = inject<SelectOrgInfoProps>('propsData');
 // 偏平化的部门数据
-const deptFlatData = inject<Array<DeptDataType>>('deptFlatData');
+const deptFlatMap = inject<Map<string, DeptDataType>>('deptFlatMap');
 // 当前列表数据信息
 const currentListData = ref<Array<DeptDataType & StaffDataType>>([]);
 // 面包屑数据信息
@@ -57,7 +57,7 @@ const showMultiple = computed(() => {
  * 组装当前列表的数据
  */
 const handleCurrentListData = (id: string = '', listData: Array<DeptDataType | RoleDataType> = []) => {
-  currentListData.value = makeListData(id, currentProps.type, listData, propsData?.staffData, deptFlatData);
+  currentListData.value = makeListData(id, currentProps.type, listData, propsData?.staffData, deptFlatMap);
 };
 
 /**

@@ -44,7 +44,7 @@ const emit = defineEmits<{
 
 const dialogVisible = ref(props.showType === ShowTypeEnum.dialog);
 // 部门索引信息表
-const deptFlatData = flattenDepartments(props.deptData ? props.deptData?.children : []);
+const deptFlatMap = flattenDepartments(props.deptData ? props.deptData?.children : []);
 // 当前选中的tab
 const currentType = ref<TabDataEnum>()
 /**
@@ -58,6 +58,6 @@ const tabChange = (type: TabDataEnum) => {
 
 
 provide('propsData', props);
-provide('deptFlatData', deptFlatData);
+provide('deptFlatMap', deptFlatMap);
 provide('tabChange', tabChange);
 </script>

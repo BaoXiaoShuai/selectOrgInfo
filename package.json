@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "element-plus": "^2.7.6",
+    "pinia": "^2.1.7",
     "radash": "^12.1.0",
     "scss": "^0.2.4",
     "ts-node": "^10.9.2",
