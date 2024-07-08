@@ -32,6 +32,7 @@ export const serializeStaffData = (staffData: Array<StaffDataType> = [], deptFla
     return {
       ...item,
       isStaff: true,
+      dataType: TabDataEnum.staff,
       deptNames: item?.departments?.map(dept => deptFlatMap?.get(dept)?.name).filter(name => name !== undefined) as string[]
     };
   });
@@ -66,13 +67,16 @@ export const makeListData = (
       item.allStaffIds = currentDeptStaffInfo.allStaffIds;
       item.allStaffCount = currentDeptStaffInfo.allStaffCount;
       item.isDept = true;
+      item.dataType = TabDataEnum.department
     }
     if (type === TabDataEnum.department) {
       item.deptPath = deptFlatMap?.get(item.id)?.path;
       item.isDept = true;
+      item.dataType = TabDataEnum.department
     }
     if (type === TabDataEnum.role) {
       item.isRole = true;
+      item.dataType = TabDataEnum.role
     }
   });
   return listData.concat(currentStaffList);

@@ -23,9 +23,16 @@ import Avatar from './avatar.vue';
 import Title from './title.vue';
 import Operate from './operate.vue';
 import { ListItemProps } from './type.ts';
-import { inject, computed, ref } from 'vue';
+import { inject, computed, ref, watchEffect } from 'vue';
 import { useResultListStore } from '../store/resultList';
-import { serializeStaffData, compareData } from '../util'
+import { serializeStaffData, compareData } from '../util';
+
+export interface SelectedCallbackType {
+  id: string;
+  isSelected: boolean;
+  isIndeterminate: boolean
+}
+
 // store
 const resultListStore = useResultListStore();
 // 最顶级的参数
@@ -38,21 +45,41 @@ const multiple = computed(() => propsData?.multiple || false);
 const isIndeterminate = ref<boolean>(false);
 // 当前的 props
 const props = defineProps<ListItemProps>();
-// 点击事件
+// 事件
 const emit = defineEmits<{
   (e: 'itemClick', data: DeptDataType | StaffDataType): void;
+  (e: 'selectedCallback', data: SelectedCallbackType): void;
 }>();
 // 是否选中
 const isSelected = computed(() => {
+  if (props.data.allStaffCount === 0) return false;
   // 员工tab 下的部门
   if (props.data.isDept && props.tabData === TabDataEnum.staff && propsData?.multiple) {
     const isSelectCount = compareData(props.data.allStaffIds, resultListStore.resultIds);
     // 判断半选状态
     isIndeterminate.value = isSelectCount !== 0 && isSelectCount < props.data.allStaffCount;
-    return isSelectCount === props.data.allStaffCount
-  } 
+    return isSelectCount === props.data.allStaffCount;
+  }
   return resultListStore.resultIds.includes(props.data.id);
 });
+
+
+
+
+watchEffect(() => {
+  // 如果是多选并且是左边选择区域的情况下
+  // 给上层 callback 一下当前行的选中状态，以便上层的全选判断状态
+  if (!props.isResultShow && propsData?.multiple) {
+    console.log(props.data.name, isSelected.value, isIndeterminate.value);
+    emit('selectedCallback', {
+      id: props.data.id,
+      isSelected: isSelected.value,
+      isIndeterminate: isIndeterminate.value
+    });
+  }
+});
+
+
 
 /**
  * 往结果集合里增加数据

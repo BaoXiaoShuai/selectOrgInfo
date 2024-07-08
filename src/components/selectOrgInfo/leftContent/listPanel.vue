@@ -3,14 +3,14 @@
     <BreadInfo v-model:data="breadDataList" @itemClick="changeListData" />
     <div v-if="showMultiple" class="w-full px-px10 !h-[25px]">
       <!-- <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange"> -->
-      <el-checkbox class="!h-[25px] flex items-center">全选</el-checkbox>
+      <el-checkbox v-model="isSelectedAll" :indeterminate="isIndeterminate" class="!h-[25px] flex items-center">全选</el-checkbox>
     </div>
     <div class="w-full h-less30 overflow-x-hidden overflow-y-auto"
       :class="{ 'flex justify-center items-center': !currentListData.length, '!h-less55' : showMultiple }">
       <template v-for="item in currentListData" :key="item.id">
-        <ListItem @item-click="changeListData" :data="item" :tab-data="type" />
+        <ListItem @item-click="changeListData" :data="item" :tab-data="type" @selectedCallback="pushCheckData" />
       </template>
-      <el-empty class="m-0 !p-0" v-if="!currentListData.length" :image-size="100" description="暂无数据" />
+      <EmptyPanel v-if="!currentListData.length" />
     </div>
   </div>
 </template>
@@ -22,6 +22,8 @@ import ListItem from '../listItem/index.vue';
 import BreadInfo from '../common/bread.vue';
 import { makeListData } from '../util/index.ts';
 import { TabDataEnum } from '../enum';
+import EmptyPanel from '../common/empty.vue'
+import { SelectedCallbackType } from '../listItem/index.vue';
 
 interface IProps {
   type: TabDataEnum;
@@ -39,11 +41,12 @@ const propsData = inject<SelectOrgInfoProps>('propsData');
 // 偏平化的部门数据
 const deptFlatMap = inject<Map<string, DeptDataType>>('deptFlatMap');
 // 当前列表数据信息
-const currentListData = ref<Array<DeptDataType & StaffDataType>>([]);
+const currentListData = ref<Array<DeptDataType | StaffDataType | RoleDataType>>([]);
 // 面包屑数据信息
 const breadDataList = ref<Array<DeptDataType>>([]);
 // 是否显示多选操作
 const showMultiple = computed(() => {
+  if(!currentListData.value.length) return false
   // 员工首页不展示多选
   // 因为在此基础上，点击部门选择时会把所有的子级员工都选中
   // 所有在此优化为员工首页不允许进行全部选择的操作
@@ -52,12 +55,27 @@ const showMultiple = computed(() => {
   }
   return propsData?.multiple
 })
+// 子级给返回的选中状态
+const itemsCheckMap = ref<Map<string, SelectedCallbackType>>(new Map());
+const pushCheckData = (data: SelectedCallbackType) => {
+  itemsCheckMap.value.set(data.id, data);
+}
+
+// 是否全选
+const isSelectedAll = computed(() => {
+  return Array.from(itemsCheckMap.value.values()).every(item => item.isSelected)
+})
+// 是否半选
+const isIndeterminate = computed(() => {
+  return Array.from(itemsCheckMap.value.values()).some(item => item.isSelected) && !isSelectedAll.value
+})
 
 /**
  * 组装当前列表的数据
  */
 const handleCurrentListData = (id: string = '', listData: Array<DeptDataType | RoleDataType> = []) => {
   currentListData.value = makeListData(id, currentProps.type, listData, propsData?.staffData, deptFlatMap);
+  itemsCheckMap.value.clear()
 };
 
 /**

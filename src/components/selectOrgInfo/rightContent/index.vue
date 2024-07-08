@@ -1,48 +1,63 @@
 <template>
   <div class="h-full flex-1">
-    <div class="w-full px-px10 h-[50px] flex items-center">
-      <span class="text-[12px]">已选：</span>
-      <div class="text-[12px] flex-1">
-        <el-tag class="mr-[5px]" closable size="small" type="info">
-          人员：10
-        </el-tag>
-        <el-tag class="mr-[5px]" closable size="small" type="info">
-          部门：10
-        </el-tag>
-        <el-tag closable size="small" type="info">
-          角色：10
-        </el-tag>
+    <template v-if="!listData.length">
+      <EmptyPanel />
+    </template>
+    <template v-else>
+      <div class="w-full px-px10 h-[50px] flex items-center">
+        <span class="text-[12px]">已选：</span>
+        <div class="text-[12px] flex-1">
+          <template v-for="item in dataCountsArr" :key="item.type">
+            <el-tag v-if="item.count > 0" class="mr-[5px]" closable size="small" type="info">
+              {{ item?.label }} {{ item?.count }}
+            </el-tag>
+          </template>
+        </div>
+        <el-button type="primary" text @click="clearData">
+          清空
+        </el-button>
       </div>
-      <el-button type="primary" text @click="clearData">
-        清空
-      </el-button>
-    </div>
-    <div class="w-full h-less50 overflow-x-hidden overflow-y-auto">
-      <template v-for="item in listData" :key="item.id">
-        <ListItem :data="item" isResultShow />
-      </template>
-    </div>
+      <div class="w-full h-less50 overflow-x-hidden overflow-y-auto">
+        <template v-for="item in listData" :key="item.id">
+          <ListItem :data="item" isResultShow />
+        </template>
+      </div>
+    </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useResultListStore } from '../store/resultList'
+import { computed, inject } from 'vue';
+import { useResultListStore } from '../store/resultList';
 import ListItem from '../listItem/index.vue';
+import { SelectOrgInfoProps } from '../type.ts';
+import EmptyPanel from '../common/empty.vue'
 
+// 整体的 props 数据
+const propsData = inject<SelectOrgInfoProps>('propsData');
 // store
 const resultListStore = useResultListStore();
-
+// 当前列表数据
 const listData = computed(() => {
-  console.log(resultListStore.resultList)
-  return resultListStore.resultList
-})
+  console.log(resultListStore.resultList);
+  return resultListStore.resultList;
+});
+// 已经选择的数据统计
+const dataCountsArr = computed(() => {
+  return propsData?.tabData?.map(item => {
+    return {
+      ...item,
+      count: resultListStore.resultList.filter(initem => initem.dataType === item.type).length
+    };
+  });
+});
+
 
 /**
  * 清楚方法
  */
 const clearData = () => {
-  resultListStore.$reset()
+  resultListStore.$reset();
 }
 
 </script>

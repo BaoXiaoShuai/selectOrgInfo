@@ -9,6 +9,7 @@ export interface StaffDataType {
   departments?: Array<string>;
   isStaff?: boolean
   deptNames?: Array<string>
+  dataType?: TabDataEnum
   [key: string]: any;
 }
 /**
@@ -23,6 +24,7 @@ export interface DeptDataType {
   allStaffIds?: Array<string>
   isDept?: boolean
   deptPath?: string
+  dataType?: TabDataEnum
   [key: string]: any;
 }
 
@@ -33,6 +35,7 @@ export interface RoleDataType {
   id: string;
   name: string;
   children?: Array<RoleDataType>;
+  dataType?: TabDataEnum
   isRole?: boolean
   [key: string]: any;
 }
