@@ -4,6 +4,7 @@
     <div v-if="showMultiple" class="w-full px-px10 !h-[25px]">
       <!-- <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange"> -->
       <el-checkbox v-model="isSelectedAll" :indeterminate="isIndeterminate"
+        @change="selectAll"
         class="!h-[25px] flex items-center">全选</el-checkbox>
     </div>
     <div class="w-full h-less30 overflow-x-hidden overflow-y-auto"
@@ -137,8 +138,17 @@ const insetResultData = (data: DeptDataType | StaffDataType | RoleDataType, isIn
   if (data.isDept && currentProps.type === TabDataEnum.staff && propsData?.multiple) {
     resultListStore.pushResultList(serializeStaffData(data.allStaffList, deptFlatMap), propsData?.multiple || false, isIndeterminate);
   } else {
-    resultListStore.pushResultList([data], propsData?.multiple || false);
+    resultListStore.pushResultList([data], propsData?.multiple || false, isIndeterminate);
   }
+};
+
+/**
+ * 全选操作
+ */
+const selectAll = () => {
+  currentListData.value.forEach(item => {
+    insetResultData(item, isIndeterminate.value);
+  });
 };
 
 </script>
