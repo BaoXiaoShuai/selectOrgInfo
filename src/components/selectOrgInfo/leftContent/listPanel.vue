@@ -3,12 +3,14 @@
     <BreadInfo v-model:data="breadDataList" @itemClick="changeListData" />
     <div v-if="showMultiple" class="w-full px-px10 !h-[25px]">
       <!-- <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange"> -->
-      <el-checkbox v-model="isSelectedAll" :indeterminate="isIndeterminate" class="!h-[25px] flex items-center">全选</el-checkbox>
+      <el-checkbox v-model="isSelectedAll" :indeterminate="isIndeterminate"
+        class="!h-[25px] flex items-center">全选</el-checkbox>
     </div>
     <div class="w-full h-less30 overflow-x-hidden overflow-y-auto"
-      :class="{ 'flex justify-center items-center': !currentListData.length, '!h-less55' : showMultiple }">
+      :class="{ 'flex justify-center items-center': !currentListData.length, '!h-less55': showMultiple }">
       <template v-for="item in currentListData" :key="item.id">
-        <ListItem @item-click="changeListData" :data="item" :tab-data="type" @selectedCallback="pushCheckData" />
+        <ListItem @item-click="changeListData" :data="item" :tab-data="type" @selectedCallback="pushCheckData"
+          @selectData="insetResultData" />
       </template>
       <EmptyPanel v-if="!currentListData.length" />
     </div>
@@ -20,10 +22,13 @@ import { ref, inject, onMounted, computed } from 'vue';
 import { DeptDataType, RoleDataType, SelectOrgInfoProps, StaffDataType } from '../type.ts';
 import ListItem from '../listItem/index.vue';
 import BreadInfo from '../common/bread.vue';
-import { makeListData } from '../util/index.ts';
+import { makeListData, serializeStaffData } from '../util/index.ts';
 import { TabDataEnum } from '../enum';
-import EmptyPanel from '../common/empty.vue'
+import EmptyPanel from '../common/empty.vue';
 import { SelectedCallbackType } from '../listItem/index.vue';
+import { useResultListStore } from '../store/resultList';
+// store
+const resultListStore = useResultListStore();
 
 interface IProps {
   type: TabDataEnum;
@@ -46,36 +51,36 @@ const currentListData = ref<Array<DeptDataType | StaffDataType | RoleDataType>>(
 const breadDataList = ref<Array<DeptDataType>>([]);
 // 是否显示多选操作
 const showMultiple = computed(() => {
-  if(!currentListData.value.length) return false
+  if (!currentListData.value.length) return false;
   // 员工首页不展示多选
   // 因为在此基础上，点击部门选择时会把所有的子级员工都选中
   // 所有在此优化为员工首页不允许进行全部选择的操作
   if (currentProps.type === TabDataEnum.staff) {
-    return breadDataList.value.length > 1 && propsData?.multiple
+    return breadDataList.value.length > 1 && propsData?.multiple;
   }
-  return propsData?.multiple
-})
+  return propsData?.multiple;
+});
 // 子级给返回的选中状态
 const itemsCheckMap = ref<Map<string, SelectedCallbackType>>(new Map());
 const pushCheckData = (data: SelectedCallbackType) => {
   itemsCheckMap.value.set(data.id, data);
-}
+};
 
 // 是否全选
 const isSelectedAll = computed(() => {
-  return Array.from(itemsCheckMap.value.values()).every(item => item.isSelected)
-})
+  return Array.from(itemsCheckMap.value.values()).every(item => item.isSelected);
+});
 // 是否半选
 const isIndeterminate = computed(() => {
-  return Array.from(itemsCheckMap.value.values()).some(item => item.isSelected) && !isSelectedAll.value
-})
+  return Array.from(itemsCheckMap.value.values()).some(item => item.isSelected) && !isSelectedAll.value;
+});
 
 /**
  * 组装当前列表的数据
  */
 const handleCurrentListData = (id: string = '', listData: Array<DeptDataType | RoleDataType> = []) => {
   currentListData.value = makeListData(id, currentProps.type, listData, propsData?.staffData, deptFlatMap);
-  itemsCheckMap.value.clear()
+  itemsCheckMap.value.clear();
 };
 
 /**
@@ -123,6 +128,17 @@ const changeListData = (itemData: DeptDataType | StaffDataType) => {
   if (breadDataList.value.findIndex(item => item.id === itemData.id) == -1) {
     handleBreadDataList(itemData);
   }
-}
+};
+
+/**
+ * 往结果集合里增加数据
+ */
+const insetResultData = (data: DeptDataType | StaffDataType | RoleDataType, isIndeterminate: boolean) => {
+  if (data.isDept && currentProps.type === TabDataEnum.staff && propsData?.multiple) {
+    resultListStore.pushResultList(serializeStaffData(data.allStaffList, deptFlatMap), propsData?.multiple || false, isIndeterminate);
+  } else {
+    resultListStore.pushResultList([data], propsData?.multiple || false);
+  }
+};
 
 </script>

@@ -20,13 +20,18 @@ import { ListItemProps } from './type.ts';
 import { computed } from 'vue'
 import { useResultListStore } from '../store/resultList';
 import { compareData } from '../util'
+import { inject } from 'vue'
+import { SelectOrgInfoProps } from '../type';
 // store
 const resultListStore = useResultListStore();
 
 const props = defineProps<ListItemProps>();
+// 最顶级的参数
+const propsData = inject<SelectOrgInfoProps>('propsData');
 
 // 显示已经选择的部门人数信息
 const deptSelectStaffCountStr = computed(() => {
+  if(!propsData?.multiple) return ''
   const count = compareData(props.data.allStaffIds, resultListStore.resultIds)
   if(count <= 0) return ''
   return compareData(props.data.allStaffIds, resultListStore.resultIds) + ' / ';
