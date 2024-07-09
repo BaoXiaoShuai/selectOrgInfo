@@ -3,16 +3,25 @@
     <div class="w-full">
       {{ data.name }}
     </div>
-    <div v-if="data.isDept && tabData === TabDataEnum.staff "
-      class="w-full text-[12px] text-[var(--el-color-info-light-3)]">
+    <div v-if="data.isDept && tabData === TabDataEnum.staff" class="sub-explain">
       {{ deptSelectStaffCountStr }} {{ data.allStaffCount }}人
     </div>
-    <div v-if="data.isStaff && tabData === TabDataEnum.staff"
-      class="w-full text-[12px] text-[var(--el-color-info-light-3)]">
+    <div v-if="data.isStaff && tabData === TabDataEnum.staff" class="sub-explain">
       {{ data.deptNames?.join('、') }}
     </div>
-    <div v-if="data.isStaff && isResultShow" class="w-full text-[12px] text-[var(--el-color-info-light-3)]">
-      {{ data.deptPaths?.join('、') }}
+
+    <div v-if="data.isStaff && isResultShow" class="sub-explain">
+      <el-tooltip :content="data.deptPaths?.join('、')" placement="top-start">
+        {{ data.deptPaths?.join('、') }}
+      </el-tooltip>
+    </div>
+    <div v-if="data.isDept && isResultShow" class="sub-explain">
+      <el-tooltip :content="data.deptPath" placement="top-start">
+        {{ data.deptPath }}
+      </el-tooltip>
+    </div>
+    <div v-if="data.isRole && isResultShow" class="sub-explain">
+      {{ data.rolePath }}
     </div>
   </div>
 </template>
@@ -20,10 +29,10 @@
 <script setup lang="ts">
 import { TabDataEnum } from '../enum';
 import { ListItemProps } from './type.ts';
-import { computed } from 'vue'
+import { computed } from 'vue';
 import { useResultListStore } from '../store/resultList';
-import { compareData } from '../util'
-import { inject } from 'vue'
+import { compareData } from '../util';
+import { inject } from 'vue';
 import { SelectOrgInfoProps } from '../type';
 // store
 const resultListStore = useResultListStore();
@@ -34,11 +43,18 @@ const propsData = inject<SelectOrgInfoProps>('propsData');
 
 // 显示已经选择的部门人数信息
 const deptSelectStaffCountStr = computed(() => {
-  if(!propsData?.multiple) return ''
-  const count = compareData(props.data.allStaffIds, resultListStore.resultIds)
-  if(count <= 0) return ''
+  if (!propsData?.multiple) return '';
+  const count = compareData(props.data.allStaffIds, resultListStore.resultIds);
+  if (count <= 0) return '';
   return compareData(props.data.allStaffIds, resultListStore.resultIds) + ' / ';
 })
 
-
 </script>
+
+<style scoped lang="scss">
+.sub-explain {
+  @apply w-full text-[12px];
+  @apply text-[var(--el-color-info-light-3)];
+  @apply line-clamp-1;
+}
+</style>

@@ -29,13 +29,13 @@ const getDeptStaffCount = (dept: DeptDataType, staffData: Array<StaffDataType>) 
  */
 export const serializeStaffData = (staffData: Array<StaffDataType> = [], deptFlatMap?: Map<string, DeptDataType>) => {
   return staffData.map(item => {
-    const departments = item?.departments?.map(dept => deptFlatMap?.get(dept))
+    const departments = item?.departments?.map(dept => deptFlatMap?.get(dept));
     return {
       ...item,
       isStaff: true,
       dataType: TabDataEnum.staff,
       deptNames: departments?.map(dept => dept?.name).filter(name => name !== undefined) as string[],
-      deptPaths: departments?.map(dept => dept?.path).filter(path => path !== undefined) as string[]
+      deptPaths: departments?.map(dept => dept?.deptPath).filter(path => path !== undefined) as string[]
     };
   });
 };
@@ -53,7 +53,8 @@ export const makeListData = (
   type: TabDataEnum,
   listData: Array<DeptDataType | RoleDataType> = [],
   allStaffData: Array<StaffDataType> = [],
-  deptFlatMap?: Map<string, DeptDataType>
+  deptFlatMap?: Map<string, DeptDataType>,
+  roleFlatMap?: Map<string, RoleDataType>
 ) => {
   let currentStaffList: Array<StaffDataType> = [];
   if (type === TabDataEnum.staff) {
@@ -69,16 +70,17 @@ export const makeListData = (
       item.allStaffIds = currentDeptStaffInfo.allStaffIds;
       item.allStaffCount = currentDeptStaffInfo.allStaffCount;
       item.isDept = true;
-      item.dataType = TabDataEnum.department
+      item.dataType = TabDataEnum.department;
     }
     if (type === TabDataEnum.department) {
-      item.deptPath = deptFlatMap?.get(item.id)?.path;
+      item.deptPath = deptFlatMap?.get(item.id)?.deptPath;
       item.isDept = true;
-      item.dataType = TabDataEnum.department
+      item.dataType = TabDataEnum.department;
     }
     if (type === TabDataEnum.role) {
       item.isRole = true;
-      item.dataType = TabDataEnum.role
+      item.dataType = TabDataEnum.role;
+      item.rolePath = roleFlatMap?.get(item.id)?.rolePath;
     }
   });
   return listData.concat(currentStaffList);
@@ -96,7 +98,9 @@ export const flattenDepartments = (departments: Array<DeptDataType> = [], parent
     const currentPath = parentPath ? `${parentPath} / ${item.name}` : item.name;
     result.set(item.id, {
       ...item,
-      path: currentPath,
+      isDept: true,
+      dataType: TabDataEnum.department,
+      deptPath: currentPath,
     });
     if (item.children && item.children.length > 0) {
       const childrenMap = flattenDepartments(item.children, currentPath);
@@ -107,6 +111,27 @@ export const flattenDepartments = (departments: Array<DeptDataType> = [], parent
   });
   return result;
 };
+
+/**
+ * 扁平化角色数据
+ * 角色是以组为概念，所以只有两层
+ * @param role 
+ * @returns 
+ */
+export const flattenRoles = (role: Array<RoleDataType> = []) =>{
+  let result = new Map<string, RoleDataType>();
+  role.forEach((item: RoleDataType) => {
+    item.children?.forEach((child: RoleDataType) => {
+      result.set(child.id, {
+        ...child,
+        isRole: true,
+        dataType: TabDataEnum.role,
+        rolePath: item.name + ' / ' + child.name
+      })
+    })
+  })
+  return result;
+}
 
 /**
  * 对比两个数组，得出数据差数据

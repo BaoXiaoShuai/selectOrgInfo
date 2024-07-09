@@ -5,4 +5,5 @@ export interface ListItemProps {
   data: StaffDataType | DeptDataType | RoleDataType
   tabData?: TabDataEnum
   isResultShow?: boolean
+  showCheck?: boolean
 }

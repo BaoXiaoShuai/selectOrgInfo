@@ -25,15 +25,18 @@ import RoleData from './mock/role.json'
 const tabData = ref([
   {
     label: '人员',
-    type: TabDataEnum.staff
+    type: TabDataEnum.staff,
+    checkIds: ['uzU7pcWfScck00:ID01p4s6rXHfpd', 'uzU7pcWfScck00:ID01oNM9wzQESX', 'uzU7pcWfScck00:kUo95fOa-k4M00']
   },
   {
     label: '部门',
-    type: TabDataEnum.department
+    type: TabDataEnum.department,
+    checkIds: ['uzU7pcWfScck00:a4sbKflQlks800', 'uzU7pcWfScck00:ID_3xj2BGxNw90']
   },
   {
     label: '角色',
-    type: TabDataEnum.role
+    type: TabDataEnum.role,
+    checkIds: ['ID01pT4CpsQC19']
   }
 ])
 

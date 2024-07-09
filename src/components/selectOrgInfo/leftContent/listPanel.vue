@@ -1,15 +1,15 @@
 <template>
   <div class="w-full h-full ">
     <BreadInfo v-model:data="breadDataList" @itemClick="changeListData" />
-    <div v-if="showMultiple" class="w-full px-px10 !h-[25px]">
+    <div v-if="showAllMultiple" class="w-full px-px10 !h-[25px]">
       <el-checkbox v-model="isSelectedAll" :indeterminate="isIndeterminate" @change="selectAll"
         class="!h-[25px] flex items-center">全选</el-checkbox>
     </div>
     <div class="w-full h-less30 overflow-x-hidden overflow-y-auto"
-      :class="{ 'flex justify-center items-center': !currentListData.length, '!h-less55': showMultiple }">
+      :class="{ 'flex justify-center items-center': !currentListData.length, '!h-less55': showAllMultiple }">
       <template v-for="item in currentListData" :key="item.id">
-        <ListItem @item-click="changeListData" :data="item" :tab-data="type" @selectedCallback="pushCheckData"
-          @selectData="insetResultData" />
+        <ListItem :showCheck="showCheck" @item-click="changeListData" :data="item" :tab-data="type"
+          @selectedCallback="pushCheckData" @selectData="insetResultData" />
       </template>
       <EmptyPanel v-if="!currentListData.length" />
     </div>
@@ -21,7 +21,7 @@ import { ref, inject, onMounted, computed } from 'vue';
 import { DeptDataType, RoleDataType, SelectOrgInfoProps, StaffDataType } from '../type.ts';
 import ListItem from '../listItem/index.vue';
 import BreadInfo from '../common/bread.vue';
-import { makeListData, serializeStaffData } from '../util/index.ts';
+import { makeListData, serializeStaffData, flattenDepartments } from '../util/index.ts';
 import { TabDataEnum } from '../enum';
 import EmptyPanel from '../common/empty.vue';
 import { SelectedCallbackType } from '../listItem/index.vue';
@@ -44,13 +44,23 @@ const currentProps = withDefaults(defineProps<IProps>(), {
 const propsData = inject<SelectOrgInfoProps>('propsData');
 // 偏平化的部门数据
 const deptFlatMap = inject<Map<string, DeptDataType>>('deptFlatMap');
+// 偏平化的角色数据
+const roleFlatMap = inject<Map<string, RoleDataType>>('roleFlatMap');
 // 当前列表数据信息
 const currentListData = ref<Array<DeptDataType | StaffDataType | RoleDataType>>([]);
 // 面包屑数据信息
 const breadDataList = ref<Array<DeptDataType>>([]);
+// 是否显示选择区域 在角色的情况下第一级不显示选择，代表第一级不可被选择
+const showCheck = computed(() => {
+  if (currentProps.type === TabDataEnum.role && breadDataList.value.length === 1) {
+    return false;
+  }
+  return true;
+});
 // 是否显示多选操作
-const showMultiple = computed(() => {
+const showAllMultiple = computed(() => {
   if (!currentListData.value.length) return false;
+  if (!showCheck.value) return false;
   // 员工首页不展示多选
   // 因为在此基础上，点击部门选择时会把所有的子级员工都选中
   // 所有在此优化为员工首页不允许进行全部选择的操作
@@ -78,7 +88,7 @@ const isIndeterminate = computed(() => {
  * 组装当前列表的数据
  */
 const handleCurrentListData = (id: string = '', listData: Array<DeptDataType | RoleDataType> = []) => {
-  currentListData.value = makeListData(id, currentProps.type, listData, propsData?.staffData, deptFlatMap);
+  currentListData.value = makeListData(id, currentProps.type, listData, propsData?.staffData, deptFlatMap, roleFlatMap);
   itemsCheckMap.value.clear();
 };
 
@@ -132,12 +142,20 @@ const changeListData = (itemData: DeptDataType | StaffDataType) => {
 /**
  * 往结果集合里增加数据
  */
-const insetResultData = (data: DeptDataType | StaffDataType | RoleDataType, isIndeterminate: boolean) => {
-  if (data.isDept && currentProps.type === TabDataEnum.staff && propsData?.multiple) {
-    resultListStore.pushResultList(serializeStaffData(data.allStaffList, deptFlatMap), propsData?.multiple || false, isIndeterminate);
-  } else {
-    resultListStore.pushResultList([data], propsData?.multiple || false, isIndeterminate);
+const insetResultData = (data: DeptDataType | StaffDataType | RoleDataType, isIndeterminate: boolean, altKey: boolean = false) => {
+  const multiple = propsData?.multiple || false;
+  // 在部门情况下 多选，并且是按住altKey时，把当前部门和所有子级都进行添加
+  if (currentProps.type === TabDataEnum.department && multiple && altKey) {
+    const allChild = Array.from(flattenDepartments(data.children, data.name).values());
+    resultListStore.pushResultList([data, ...allChild], multiple, isIndeterminate);
+    return;
   }
+  // 在员工 tab 下 是部门数据时
+  if (data.isDept && currentProps.type === TabDataEnum.staff && multiple) {
+    resultListStore.pushResultList(serializeStaffData(data.allStaffList, deptFlatMap), multiple, isIndeterminate);
+    return;
+  }
+  resultListStore.pushResultList([data], multiple, isIndeterminate);
 };
 
 /**

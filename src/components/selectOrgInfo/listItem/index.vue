@@ -1,7 +1,7 @@
 <template>
   <div @click="itemClick"
     class="w-full h-[50px] flex items-center hover:bg-[var(--el-fill-color)] px-px10 text-[14px] cursor-pointer [&>div]:h-full [&>div]:flex [&>div]:items-center">
-    <template v-if="!isResultShow">
+    <template v-if="showCheck">
       <div v-if="multiple" class="w-[25px]" @click.stop="checkBoxClick">
         <el-checkbox v-model="isSelected" :indeterminate="isIndeterminate" />
       </div>
@@ -49,7 +49,7 @@ const props = defineProps<ListItemProps>();
 const emit = defineEmits<{
   (e: 'itemClick', data: DeptDataType | StaffDataType): void;
   (e: 'selectedCallback', data: SelectedCallbackType): void;
-  (e: 'selectData', data: DeptDataType | StaffDataType | RoleDataType, isIndeterminate: boolean): void;
+  (e: 'selectData', data: DeptDataType | StaffDataType | RoleDataType, isIndeterminate: boolean, altKey?: boolean): void;
 }>();
 // 是否选中
 const isSelected = computed(() => {
@@ -79,9 +79,14 @@ watchEffect(() => {
 /**
  * 列表的点击
  */
-const itemClick = () => {
+const itemClick = (e: MouseEvent) => {
+  // 在没有选择的情况下，点击事件是点击行
+  if(!props.showCheck) {
+    emit('itemClick', props.data);
+    return 
+  }
   if (props.tabData !== TabDataEnum.staff || props.data.isStaff) {
-    emit('selectData', props.data, false);
+    emit('selectData', props.data, false, e.altKey);
   } else {
     emit('itemClick', props.data);
   }
@@ -90,8 +95,8 @@ const itemClick = () => {
 /**
  * 多选的点击
  */
-const checkBoxClick = () => {
-  emit('selectData', props.data, isIndeterminate.value);
+const checkBoxClick = (e: MouseEvent) => {
+  emit('selectData', props.data, isIndeterminate.value, e.altKey);
 }
 
 </script>

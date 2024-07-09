@@ -50,6 +50,7 @@ export interface SelectOrgInfoProps {
   tabData?: Array<{
     label: string;
     type: TabDataEnum;
+    checkIds?: Array<string>;
   }>;
   staffData?: Array<StaffDataType>;
   deptData?: DeptDataType;
