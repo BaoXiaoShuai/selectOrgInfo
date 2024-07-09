@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { StaffDataType, DeptDataType, RoleDataType } from "../type";
+import { TabDataEnum } from '../enum'
 
 type ResultListType = StaffDataType | DeptDataType | RoleDataType;
 
@@ -54,6 +55,14 @@ export const useResultListStore = defineStore('resultList', {
      */
     removeResultListItem(id: string) {
       this.resultList = this.resultList.filter(item => item.id !== id);
+      this.resultIds = this.resultList.map(item => item.id);
+    },
+    /**
+     * 根据类型来删除数据
+     * @param type 
+     */
+    removeResultListItemByType(type: TabDataEnum) {
+      this.resultList = this.resultList.filter(item => item.dataType !== type);
       this.resultIds = this.resultList.map(item => item.id);
     }
   }

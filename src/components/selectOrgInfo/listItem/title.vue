@@ -7,9 +7,12 @@
       class="w-full text-[12px] text-[var(--el-color-info-light-3)]">
       {{ deptSelectStaffCountStr }} {{ data.allStaffCount }}人
     </div>
-    <div v-if="(data.isStaff && tabData === TabDataEnum.staff) || isResultShow"
+    <div v-if="data.isStaff && tabData === TabDataEnum.staff"
       class="w-full text-[12px] text-[var(--el-color-info-light-3)]">
       {{ data.deptNames?.join('、') }}
+    </div>
+    <div v-if="data.isStaff && isResultShow" class="w-full text-[12px] text-[var(--el-color-info-light-3)]">
+      {{ data.deptPaths?.join('、') }}
     </div>
   </div>
 </template>

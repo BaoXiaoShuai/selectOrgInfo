@@ -8,7 +8,7 @@
         <span class="text-[12px]">已选：</span>
         <div class="text-[12px] flex-1">
           <template v-for="item in dataCountsArr" :key="item.type">
-            <el-tag v-if="item.count > 0" class="mr-[5px]" closable size="small" type="info">
+            <el-tag @close="deleteData(item.type)" v-if="item.count > 0" class="mr-[5px]" closable size="small" type="info">
               {{ item?.label }} {{ item?.count }}
             </el-tag>
           </template>
@@ -32,6 +32,7 @@ import { useResultListStore } from '../store/resultList';
 import ListItem from '../listItem/index.vue';
 import { SelectOrgInfoProps } from '../type.ts';
 import EmptyPanel from '../common/empty.vue'
+import { TabDataEnum } from '../enum'
 
 // 整体的 props 数据
 const propsData = inject<SelectOrgInfoProps>('propsData');
@@ -54,10 +55,18 @@ const dataCountsArr = computed(() => {
 
 
 /**
- * 清楚方法
+ * 清除方法
  */
 const clearData = () => {
   resultListStore.$reset();
+}
+
+/**
+ * 根据类型来删除数据
+ * @param type 
+ */
+const deleteData = (type: TabDataEnum) => {
+  resultListStore.removeResultListItemByType(type);
 }
 
 </script>

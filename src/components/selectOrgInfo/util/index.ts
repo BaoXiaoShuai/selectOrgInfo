@@ -29,11 +29,13 @@ const getDeptStaffCount = (dept: DeptDataType, staffData: Array<StaffDataType>) 
  */
 export const serializeStaffData = (staffData: Array<StaffDataType> = [], deptFlatMap?: Map<string, DeptDataType>) => {
   return staffData.map(item => {
+    const departments = item?.departments?.map(dept => deptFlatMap?.get(dept))
     return {
       ...item,
       isStaff: true,
       dataType: TabDataEnum.staff,
-      deptNames: item?.departments?.map(dept => deptFlatMap?.get(dept)?.name).filter(name => name !== undefined) as string[]
+      deptNames: departments?.map(dept => dept?.name).filter(name => name !== undefined) as string[],
+      deptPaths: departments?.map(dept => dept?.path).filter(path => path !== undefined) as string[]
     };
   });
 };
@@ -91,7 +93,7 @@ export const makeListData = (
 export const flattenDepartments = (departments: Array<DeptDataType> = [], parentPath: string = ''): Map<string, DeptDataType> => {
   let result = new Map<string, DeptDataType>();
   departments.forEach((item: DeptDataType) => {
-    const currentPath = parentPath ? `${parentPath} > ${item.name}` : item.name;
+    const currentPath = parentPath ? `${parentPath} / ${item.name}` : item.name;
     result.set(item.id, {
       ...item,
       path: currentPath,

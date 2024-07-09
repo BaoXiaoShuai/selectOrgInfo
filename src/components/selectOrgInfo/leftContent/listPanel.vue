@@ -2,9 +2,7 @@
   <div class="w-full h-full ">
     <BreadInfo v-model:data="breadDataList" @itemClick="changeListData" />
     <div v-if="showMultiple" class="w-full px-px10 !h-[25px]">
-      <!-- <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange"> -->
-      <el-checkbox v-model="isSelectedAll" :indeterminate="isIndeterminate"
-        @change="selectAll"
+      <el-checkbox v-model="isSelectedAll" :indeterminate="isIndeterminate" @change="selectAll"
         class="!h-[25px] flex items-center">全选</el-checkbox>
     </div>
     <div class="w-full h-less30 overflow-x-hidden overflow-y-auto"

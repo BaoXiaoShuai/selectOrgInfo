@@ -11,11 +11,11 @@
     </template>
     <MainContent />
     <template #footer>
-      <div class="w-full flex justify-between">
+      <div class="w-full flex justify-between items-center">
         <div>
-          <el-checkbox v-if="currentType === TabDataEnum.department" label="hah" value="hi">
-            部门节点是否关联
-          </el-checkbox>
+          <label class="text-[14px]" v-if="currentType === TabDataEnum.department && props.multiple">
+            按住 option 键可快速选取子级
+          </label>
         </div>
         <el-space>
           <el-button>取消</el-button>
