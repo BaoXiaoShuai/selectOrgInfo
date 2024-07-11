@@ -7,9 +7,9 @@ export interface StaffDataType {
   id: string;
   name: string;
   departments?: Array<string>;
-  isStaff?: boolean
-  deptNames?: Array<string>
-  dataType?: TabDataEnum
+  isStaff?: boolean;
+  deptNames?: Array<string>;
+  dataType?: TabDataEnum;
   [key: string]: any;
 }
 /**
@@ -19,12 +19,12 @@ export interface DeptDataType {
   id: string;
   name: string;
   children?: Array<DeptDataType>;
-  allStaffCount?: number
-  allStaffList?: Array<StaffDataType>
-  allStaffIds?: Array<string>
-  isDept?: boolean
-  deptPath?: string
-  dataType?: TabDataEnum
+  allStaffCount?: number;
+  allStaffList?: Array<StaffDataType>;
+  allStaffIds?: Array<string>;
+  isDept?: boolean;
+  deptPath?: string;
+  dataType?: TabDataEnum;
   [key: string]: any;
 }
 
@@ -35,9 +35,15 @@ export interface RoleDataType {
   id: string;
   name: string;
   children?: Array<RoleDataType>;
-  dataType?: TabDataEnum
-  isRole?: boolean
+  dataType?: TabDataEnum;
+  isRole?: boolean;
   [key: string]: any;
+}
+
+export interface TabDataType {
+  label: string;
+  type: TabDataEnum;
+  checkIds?: Array<string>;
 }
 
 /**
@@ -47,15 +53,11 @@ export interface SelectOrgInfoProps {
   /** 展示类型 */
   showType?: ShowTypeEnum;
   title?: string;
-  tabData?: Array<{
-    label: string;
-    type: TabDataEnum;
-    checkIds?: Array<string>;
-  }>;
+  tabData?: Array<TabDataType>;
   staffData?: Array<StaffDataType>;
   deptData?: DeptDataType;
   roleData?: RoleDataType;
-  width?: number
+  width?: number;
   /** 是否多选 */
-  multiple?: boolean
+  multiple?: boolean;
 }
