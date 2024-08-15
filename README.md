@@ -26,13 +26,13 @@ mock 数据结构在 mock 文件夹下有示例
 #### 组件截图
 
 ##### 人员
-<img src="/src/assets/img/staff.png"  width="600" />
+<img src="https://raw.githubusercontent.com/BaoXiaoShuai/selectOrgInfo/main/src/assets/img/staff.png"  width="600" />
 
 ##### 部门
-<img src="/src/assets/img/dept.png"  width="600" />
+<img src="https://raw.githubusercontent.com/BaoXiaoShuai/selectOrgInfo/main/src/assets/img/dept.png"  width="600" />
 
 ##### 角色
-<img src="/src/assets/img/role.png"  width="600" />
+<img src="https://raw.githubusercontent.com/BaoXiaoShuai/selectOrgInfo/main/src/assets/img/role.png"  width="600" />
 
 #### 参数
 
@@ -93,4 +93,5 @@ mock 数据结构在 mock 文件夹下有示例
 #### 欢迎加WX交流
 
 暗号：github
-<img src="/src/assets/img/card.JPG"  width="400" />
+<img src="https://raw.githubusercontent.com/BaoXiaoShuai/selectOrgInfo/main/src/assets/img/card.JPG"  width="400" />
+
