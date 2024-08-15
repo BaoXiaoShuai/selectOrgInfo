@@ -23,4 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 .vscode
-src/mock
+src/mock/departments.json
+src/mock/role.json
+src/mock/staff.json
+src/mock/test.data.ts
