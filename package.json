@@ -1,6 +1,6 @@
 {
   "name": "select-org-info",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "通过该组件选择组织信息，包括人员、部门、角色",
   "main": "dist/select-org-info.umd.js",
   "type": "module",
@@ -8,6 +8,10 @@
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public" 
   },
   "dependencies": {
     "element-plus": "^2.7.6",
