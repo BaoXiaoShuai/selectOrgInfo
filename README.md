@@ -3,7 +3,7 @@
 #### 背景
 在使用飞书的时候，发现飞书的选择人员部门的交互比较好用，正好系统也需要一个类似于这样的东西，所以就开发了这个组件，第一版是使用的 **react + antd + ts** 编写，这一版是使用 **vite + vue3 + ts** 编写，意在通过不同的方式编写出更舒适更高效率的组件。
 
-代码编程可以有无数种变数，我不会是最厉害最优的一种，如果有人能用上此组件，并加以改造，欢迎提任何问题！
+**代码编程可以有无数种变数，我不会是最厉害最优的一种，如果有人能用上此组件，并加以改造，欢迎提任何问题！**
 
 #### Tips
 mock 数据结构在 mock 文件夹下有示例
@@ -21,7 +21,7 @@ mock 数据结构在 mock 文件夹下有示例
 #### TODO
 - [ ] 全局搜索
 - [ ] 100% 测试用例
-- [ ] 组件结构优化
+- [x] 组件结构优化
 
 #### 组件截图
 
@@ -40,14 +40,24 @@ mock 数据结构在 mock 文件夹下有示例
 
 | 参数名       | 类型 | 描述 | 是否必填 | 默认值 |
 |--------------|------|------|----------|--------|
-| `showType`   | `ShowTypeEnum` | 展示类型| 否 | 空 |
-| `title`      | `string` | 标题| 否 | 空 |
+| `showType`   | `ShowTypeEnum` | 展示类型| 否 | `dialog` |
+| `title`      | `string` | 标题| 否 | `选择组织` |
 | `tabData`    | `Array<TabDataType>` | 选项卡数据| 否 | 空 |
 | `staffData`  | `Array<StaffDataType>` | 员工数据| 否 | 空 |
 | `deptData`   | `DeptDataType` | 部门数据 | 否 | 空 |
 | `roleData`   | `RoleDataType` | 角色数据 | 否 | 空 |
 | `width`      | `number` | 宽度| 否 | 空 |
 | `multiple`   | `boolean` | 是否多选| 否 | 空 |
+| `@tab-change`   | `function` | tab 切换的回调 | 否 | 空 |
+| `@data-change`   | `function` | 所选数据的回调 | 否 | 空 |
+| `@confirm`   | `function` | 在 dialog 模式下确认的回调 | 否 | 空 |
+| `@cancel`   | `function` | 在 dialog 模式下取消的回调 | 否 | 空 |
+
+##### ShowTypeEnum
+| 参数名       | 值 | 描述 | 是否必填 | 默认值 |
+|--------------|------|------|----------|--------|
+| `card`      | `card` | 使用 element 的 card 模式 | 否 | 空 |
+| `dialog`       | `dialog` | 使用 element 的 dialog 模式 | 否 | 空 |
 
 ##### TabDataType
 | 参数名       | 类型 | 描述 | 是否必填 | 默认值 |

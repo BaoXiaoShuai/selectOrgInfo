@@ -24,12 +24,12 @@ const propsData = inject<SelectOrgInfoProps>('propsData')
 
 const defaultTab = ref<TabDataEnum>()
 
+const injectTabChange = inject<((type: TabDataEnum) => void)>('tabChange');
+
 onMounted(() => {
   defaultTab.value = propsData?.tabData?.[0].type
   injectTabChange?.(defaultTab.value || TabDataEnum.staff);
 })
-
-const injectTabChange = inject<((type: TabDataEnum) => void)>('tabChange');
 
 const tabChange = (type: TabDataEnum) => {
   injectTabChange?.(type);

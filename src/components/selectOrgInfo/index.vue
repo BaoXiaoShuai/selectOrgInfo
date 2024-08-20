@@ -18,8 +18,8 @@
           </label>
         </div>
         <el-space>
-          <el-button>取消</el-button>
-          <el-button type="primary">确认选择</el-button>
+          <el-button @click="cancelSelect">取消</el-button>
+          <el-button @click="confirmSelect" type="primary">确认选择</el-button>
         </el-space>
       </div>
     </template>
@@ -44,6 +44,9 @@ const props = withDefaults(defineProps<SelectOrgInfoProps>(), {
 
 const emit = defineEmits<{
   (e: 'tabChange', type: TabDataEnum): void;
+  (e: 'dataChange', data: any): void;
+  (e: 'confirm'): void;
+  (e: 'cancel'): void
 }>();
 
 const dialogVisible = ref(props.showType === ShowTypeEnum.dialog);
@@ -62,6 +65,25 @@ const tabChange = (type: TabDataEnum) => {
   currentType.value = type;
   emit('tabChange', type);
 };
+
+const dataChange = (data: any) => {
+  emit('dataChange', data);
+};
+
+/**
+ * 确认
+ */
+const confirmSelect = () => {
+  emit('confirm');
+};
+
+
+/**
+ * 取消
+ */
+const cancelSelect = () => {
+  emit('cancel');
+}
 
 // mounted 是否执行，做个兜底
 const hasMounted = ref<boolean>(false);
@@ -88,7 +110,7 @@ onMounted(() => {
           });
         }
         // 角色
-        else if(item.type === TabDataEnum.role){
+        else if (item.type === TabDataEnum.role) {
           // 角色只有两级，这里做个双层循环的查找
           item.checkIds.forEach(id => {
             result.push(roleFlatMap?.get(id) as RoleDataType);
@@ -100,10 +122,9 @@ onMounted(() => {
   }
 });
 
-console.log(deptFlatMap)
-
 provide('propsData', props);
 provide('deptFlatMap', deptFlatMap);
 provide('roleFlatMap', roleFlatMap);
 provide('tabChange', tabChange);
+provide('dataChange', dataChange);
 </script>

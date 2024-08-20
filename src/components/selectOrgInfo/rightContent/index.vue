@@ -8,7 +8,8 @@
         <span class="text-[12px]">已选：</span>
         <div class="text-[12px] flex-1">
           <template v-for="item in dataCountsArr" :key="item.type">
-            <el-tag @close="deleteData(item.type)" v-if="item.count > 0" class="mr-[5px]" closable size="small" type="info">
+            <el-tag @close="deleteData(item.type)" v-if="item.count > 0" class="mr-[5px]" closable size="small"
+              type="info">
               {{ item?.label }} {{ item?.count }}
             </el-tag>
           </template>
@@ -31,16 +32,20 @@ import { computed, inject } from 'vue';
 import { useResultListStore } from '../store/resultList';
 import ListItem from '../listItem/index.vue';
 import { SelectOrgInfoProps } from '../type.ts';
-import EmptyPanel from '../common/empty.vue'
-import { TabDataEnum } from '../enum'
+import EmptyPanel from '../common/empty.vue';
+import { TabDataEnum } from '../enum';
 
 // 整体的 props 数据
 const propsData = inject<SelectOrgInfoProps>('propsData');
 // store
 const resultListStore = useResultListStore();
+// dataChange 
+const injectDataChange = inject<((data: any) => void)>('dataChange');
+
 // 当前列表数据
 const listData = computed(() => {
-  console.log(resultListStore.resultList);
+  // 选择的数据回调
+  injectDataChange?.(resultListStore.resultList);
   return resultListStore.resultList;
 });
 // 已经选择的数据统计
@@ -58,7 +63,7 @@ const dataCountsArr = computed(() => {
  */
 const clearData = () => {
   resultListStore.$reset();
-}
+};
 
 /**
  * 根据类型来删除数据
