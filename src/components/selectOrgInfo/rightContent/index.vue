@@ -31,7 +31,7 @@
 import { computed, inject } from 'vue';
 import { useResultListStore } from '../store/resultList';
 import ListItem from '../listItem/index.vue';
-import { SelectOrgInfoProps } from '../type.ts';
+import { SelectOrgInfoProps, ResultListType } from '../type.ts';
 import EmptyPanel from '../common/empty.vue';
 import { TabDataEnum } from '../enum';
 
@@ -40,7 +40,7 @@ const propsData = inject<SelectOrgInfoProps>('propsData');
 // store
 const resultListStore = useResultListStore();
 // dataChange 
-const injectDataChange = inject<((data: any) => void)>('dataChange');
+const injectDataChange = inject<((data: Array<ResultListType>) => void)>('dataChange');
 
 // 当前列表数据
 const listData = computed(() => {

@@ -1,6 +1,6 @@
 {
   "name": "select-org-info",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "通过该组件选择组织信息，包括人员、部门、角色",
   "main": "dist/select-org-info.umd.js",
   "type": "module",

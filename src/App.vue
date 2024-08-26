@@ -61,8 +61,8 @@ const dataChange = (data: any) => {
 /**
  * 在 dialog 状态下，确认按钮的回调
  */
-const confirm = () => {  
-  console.log('confirm');
+const confirm = (data: any) => {  
+  console.log('confirm', data);
 }
 
 /**

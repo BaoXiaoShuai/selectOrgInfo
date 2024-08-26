@@ -22,6 +22,12 @@ mock 数据结构在 mock 文件夹下有示例
 - [ ] 全局搜索
 - [ ] 100% 测试用例
 - [x] 组件结构优化
+  
+#### 更新日志
+
+| 版本        | 更新内容 | 
+|------------|------|
+| `0.0.6`   | 更新回调数据结构，在 dialog 下确认按键增加数据信息 |
 
 #### 组件截图
 
@@ -50,8 +56,22 @@ mock 数据结构在 mock 文件夹下有示例
 | `multiple`   | `boolean` | 是否多选| 否 | 空 |
 | `@tab-change`   | `function` | tab 切换的回调 | 否 | 空 |
 | `@data-change`   | `function` | 所选数据的回调 | 否 | 空 |
-| `@confirm`   | `function` | 在 dialog 模式下确认的回调 | 否 | 空 |
+| `@confirm`   | `function` | 在 dialog 模式下确认的回调(参数与 tabChange 数据一致) | 否 | 空 |
 | `@cancel`   | `function` | 在 dialog 模式下取消的回调 | 否 | 空 |
+
+##### @tab-change 回调
+| 参数名       | 值 | 
+|--------------|------|
+| `currentType`      | `TabDataEnum` | 
+| `data` | `ResultEntityType` | 
+
+##### @tab-change 回调 ResultEntityType
+| 参数名       | 值 | 
+|--------------|------|
+| `all`      | 所有选择的合集 | 
+| `staff` | 所选的员工信息 | 
+| `department` | 所选的部门信息 | 
+| `role` | 所选的角色信息 | 
 
 ##### ShowTypeEnum
 | 参数名       | 值 | 描述 | 是否必填 | 默认值 |

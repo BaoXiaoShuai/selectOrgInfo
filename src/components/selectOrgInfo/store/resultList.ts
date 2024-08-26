@@ -1,8 +1,7 @@
 import { defineStore } from "pinia";
-import { StaffDataType, DeptDataType, RoleDataType } from "../type";
+import { ResultListType } from "../type";
 import { TabDataEnum } from '../enum'
 
-type ResultListType = StaffDataType | DeptDataType | RoleDataType;
 
 interface StateType {
   resultList: Array<ResultListType>;

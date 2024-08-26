@@ -61,3 +61,17 @@ export interface SelectOrgInfoProps {
   /** 是否多选 */
   multiple?: boolean;
 }
+
+// 联合数据类型
+export type ResultListType = StaffDataType | DeptDataType | RoleDataType;
+
+
+/**
+ * 最终抛出的实体对象
+ */
+export interface ResultEntityType {
+  'all': Array<ResultListType>;
+  [TabDataEnum.staff]: Array<StaffDataType>;
+  [TabDataEnum.department]: Array<DeptDataType>;
+  [TabDataEnum.role]: Array<RoleDataType>;
+}

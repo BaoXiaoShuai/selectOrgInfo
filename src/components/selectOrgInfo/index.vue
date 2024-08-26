@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { SelectOrgInfoProps, DeptDataType, StaffDataType, RoleDataType } from './type.ts';
+import { SelectOrgInfoProps, DeptDataType, ResultEntityType, RoleDataType, ResultListType } from './type.ts';
 import { ref, provide, onMounted } from 'vue';
 import { ShowTypeEnum, TabDataEnum } from './enum';
 import MainContent from './mainContent.vue';
@@ -42,11 +42,15 @@ const props = withDefaults(defineProps<SelectOrgInfoProps>(), {
   width: 800
 });
 
+
 const emit = defineEmits<{
   (e: 'tabChange', type: TabDataEnum): void;
-  (e: 'dataChange', data: any): void;
-  (e: 'confirm'): void;
-  (e: 'cancel'): void
+  (e: 'dataChange', data: ResultEntityType): void;
+  (e: 'confirm', data: {
+    currentType: TabDataEnum,
+    data: ResultEntityType;
+  }): void;
+  (e: 'cancel'): void;
 }>();
 
 const dialogVisible = ref(props.showType === ShowTypeEnum.dialog);
@@ -56,6 +60,8 @@ const deptFlatMap = flattenDepartments(props.deptData ? props.deptData?.children
 const roleFlatMap = flattenRoles(props.roleData ? props.roleData?.children : []);
 // 当前选中的tab
 const currentType = ref<TabDataEnum>();
+// 当前选中的数据信息
+const currentSelectData = ref<ResultEntityType>();
 
 /**
  * tab 切换后的信息
@@ -66,15 +72,29 @@ const tabChange = (type: TabDataEnum) => {
   emit('tabChange', type);
 };
 
-const dataChange = (data: any) => {
-  emit('dataChange', data);
+/**
+ * 数据的选择回调
+ * @param data 
+ */
+const dataChange = (data: Array<ResultListType>) => {
+  currentSelectData.value = {
+    all: data,
+    [TabDataEnum.staff]: data.filter(item => item.dataType === TabDataEnum.staff),
+    [TabDataEnum.department]: data.filter(item => item.dataType === TabDataEnum.department),
+    [TabDataEnum.role]: data.filter(item => item.dataType === TabDataEnum.role)
+  };
+  emit('dataChange', currentSelectData.value);
 };
 
 /**
  * 确认
  */
 const confirmSelect = () => {
-  emit('confirm');
+  const info: any = {
+    currentType: currentType.value,
+    data: currentSelectData.value
+  };
+  emit('confirm', info);
 };
 
 
@@ -83,7 +103,7 @@ const confirmSelect = () => {
  */
 const cancelSelect = () => {
   emit('cancel');
-}
+};
 
 // mounted 是否执行，做个兜底
 const hasMounted = ref<boolean>(false);
@@ -94,7 +114,7 @@ onMounted(() => {
   // 防止多次执行
   if (!hasMounted.value) {
     hasMounted.value = true;
-    let result: Array<DeptDataType | StaffDataType | RoleDataType> = [];
+    let result: Array<ResultListType> = [];
     props?.tabData?.forEach(item => {
       // 如果是有 checklist 的原数据，那么就直接进行数据处理
       if (item.checkIds?.length) {
