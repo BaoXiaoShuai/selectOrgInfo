@@ -1,11 +1,11 @@
 <template>
-  <template v-if="!isResultShow">
-    <div v-if="data.isDept && tabData === TabDataEnum.staff" class="w-[30px] justify-center">
+  <template v-if="!parentData.isResultShow">
+    <div v-if="parentData.data.isDept && parentData.tabData === TabDataEnum.staff && !parentData.searchVal" class="w-[30px] justify-center">
       <el-icon>
         <ArrowRight />
       </el-icon>
     </div>
-    <div v-if="tabData !== TabDataEnum.staff && data?.children?.length" class="justify-center">
+    <div v-if="parentData.tabData !== TabDataEnum.staff && parentData.data?.children?.length && !parentData.searchVal" class="justify-center">
       <el-tag @click.stop="$emit('itemClick')" type="primary">
         下级
       </el-tag>
@@ -25,8 +25,10 @@ import { ListItemProps } from './type.ts';
 import { SelectOrgInfoProps } from '../type'
 import { inject } from 'vue';
 import { useResultListStore } from '../store/resultList';
+import { getCurrentInstance, ref } from "vue"
 
-const props = defineProps<ListItemProps>();
+// 父组件的数据
+const parentData = ref<ListItemProps | any>(getCurrentInstance()?.parent?.props)
 
 const emit = defineEmits<{
   (e: 'itemClick'): void;
@@ -40,7 +42,7 @@ const propsData = inject<SelectOrgInfoProps>('propsData');
  */
 const deleteItem = () => {
   if(propsData?.multiple || resultStore.resultIds.length > 1) {
-    resultStore.removeResultListItem(props.data.id);
+    resultStore.removeResultListItem(parentData.value.data.id);
   } else {
     resultStore.$reset();
   }

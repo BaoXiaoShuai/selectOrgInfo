@@ -6,4 +6,5 @@ export interface ListItemProps {
   tabData?: TabDataEnum
   isResultShow?: boolean
   showCheck?: boolean
+  searchVal?: string
 }

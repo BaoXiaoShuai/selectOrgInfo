@@ -1,4 +1,4 @@
-import { StaffDataType, DeptDataType, RoleDataType } from "../type";
+import { StaffDataType, DeptDataType, RoleDataType, ResultListType } from "../type";
 import { TabDataEnum } from '../enum';
 
 /**
@@ -118,7 +118,7 @@ export const flattenDepartments = (departments: Array<DeptDataType> = [], parent
  * @param role 
  * @returns 
  */
-export const flattenRoles = (role: Array<RoleDataType> = []) =>{
+export const flattenRoles = (role: Array<RoleDataType> = []) => {
   let result = new Map<string, RoleDataType>();
   role.forEach((item: RoleDataType) => {
     item.children?.forEach((child: RoleDataType) => {
@@ -127,11 +127,11 @@ export const flattenRoles = (role: Array<RoleDataType> = []) =>{
         isRole: true,
         dataType: TabDataEnum.role,
         rolePath: item.name + ' / ' + child.name
-      })
-    })
-  })
+      });
+    });
+  });
   return result;
-}
+};
 
 /**
  * 对比两个数组，得出数据差数据
@@ -150,4 +150,76 @@ export const compareData = (aArr: string[], bArr: string[]) => {
     }
   }
   return count;
+};
+
+/**
+ * 角色的查询
+ * @param roleFlatMap 
+ * @param keyword 
+ * @returns 
+ */
+export const searchTabRole = (roleFlatMap?: Map<string, RoleDataType>, keyword: string = '') => {
+  let roleList: Array<ResultListType> = [];
+  roleFlatMap?.forEach((value) => {
+    if (value?.name?.includes(keyword)) {
+      roleList.push(value);
+    }
+  });
+  return roleList;
+}
+
+/**
+ * 部门的搜索
+ * @param deptFlatMap 
+ * @param keyword 
+ * @param allStaffData 
+ * @returns 
+ */
+export const searchTabDept = (deptFlatMap?: Map<string, DeptDataType>, keyword: string = '', allStaffData: Array<StaffDataType> = []) => {
+  let deptList: Array<ResultListType> = [];
+  deptFlatMap?.forEach((value) => {
+    if (value?.name?.includes(keyword) ||
+      value?.nameSpell?.includes(keyword?.toLocaleUpperCase()) ||
+      value?.nameInitial?.includes(keyword?.toLocaleUpperCase())) {
+      // 这里需要处理部门数据信息
+      // 当前部门下所有的员工信息，包括所有子级
+      if (allStaffData.length > 0) {
+        const currentDeptStaffInfo = getDeptStaffCount(value, allStaffData);
+        value.allStaffList = currentDeptStaffInfo.allStaffList;
+        value.allStaffIds = currentDeptStaffInfo.allStaffIds;
+        value.allStaffCount = currentDeptStaffInfo.allStaffCount;
+        value.isDept = true;
+        value.dataType = TabDataEnum.department;
+      }
+     
+      deptList.push(value);
+    }
+  });
+  return deptList;
+};
+
+/**
+ * 人员搜索
+ * @param allStaffData 
+ * @param deptFlatMap
+ * @param keyword 
+ * @param multiple
+ */
+export const searchTabStaff = (allStaffData?: Array<StaffDataType>, deptFlatMap?: Map<string, DeptDataType>, keyword: string = '', multiple?: boolean) => {
+  let result: Array<ResultListType>;
+  const staffData = allStaffData?.filter(item => {
+    return item.name?.includes(keyword)
+      || item?.nickName?.includes(keyword)
+      || item?.nameSpell?.includes(keyword?.toLocaleUpperCase()) // 全拼
+      || item?.nameInitial?.includes(keyword?.toLocaleUpperCase()); // 首大字母
+  });
+  let deptList: Array<ResultListType> = [];
+  if (multiple && deptFlatMap && allStaffData) {
+    // 部门搜索
+    deptList = searchTabDept(deptFlatMap, keyword, allStaffData);
+    result = deptList.concat(serializeStaffData(staffData, deptFlatMap));
+  } else {
+    result = serializeStaffData(staffData, deptFlatMap);
+  }
+  return result;
 };

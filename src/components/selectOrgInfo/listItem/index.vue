@@ -13,8 +13,8 @@
       </div>
     </template>
     <Avatar :data="data" :tab-data="tabData" />
-    <Title :data="data" :tab-data="tabData" :isResultShow="isResultShow" />
-    <Operate :data="data" :tab-data="tabData" :isResultShow="isResultShow" @item-click="$emit('itemClick', data)" />
+    <Title />
+    <Operate @item-click="$emit('itemClick', data)" />
   </div>
 </template>
 
@@ -33,6 +33,7 @@ export interface SelectedCallbackType {
   id: string;
   isSelected: boolean;
   isIndeterminate: boolean;
+  searchVal?: string;
 }
 
 // store
@@ -53,7 +54,7 @@ const emit = defineEmits<{
 }>();
 // 是否选中
 const isSelected = computed(() => {
-  if (props.data.isDept && props.data.allStaffCount === 0) return false;
+  if (props.data.isDept && props.data.allStaffCount === 0 && props.tabData === TabDataEnum.staff) return false;
   // 员工tab 下的部门
   if (props.data.isDept && props.tabData === TabDataEnum.staff && propsData?.multiple) {
     const isSelectCount = compareData(props.data.allStaffIds, resultListStore.resultIds);
@@ -85,7 +86,7 @@ const itemClick = (e: MouseEvent) => {
     emit('itemClick', props.data);
     return 
   }
-  if (props.tabData !== TabDataEnum.staff || props.data.isStaff) {
+  if (props.tabData !== TabDataEnum.staff || props.data.isStaff || props.searchVal) {
     emit('selectData', props.data, false, e.altKey);
   } else {
     emit('itemClick', props.data);

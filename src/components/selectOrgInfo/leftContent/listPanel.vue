@@ -1,27 +1,27 @@
 <template>
-  <div class="w-full h-full ">
-    <BreadInfo v-model:data="breadDataList" @itemClick="changeListData" />
-    <div v-if="showAllMultiple" class="w-full px-px10 !h-[25px]">
+  <div class="w-full h-full flex flex-col">
+    <BreadInfo v-if="!searchVal" v-model:data="breadDataList" @itemClick="changeListData" />
+    <div v-if="showAllMultiple" class="w-full px-px10 !h-[25px]" :class="{ 'pt-[5px]': searchVal }">
       <el-checkbox v-model="isSelectedAll" :indeterminate="isIndeterminate" @change="selectAll"
         class="!h-[25px] flex items-center">全选</el-checkbox>
     </div>
-    <div class="w-full h-less30 overflow-x-hidden overflow-y-auto"
-      :class="{ 'flex justify-center items-center': !currentListData.length, '!h-less55': showAllMultiple }">
+    <div class="w-full flex-1 overflow-x-hidden overflow-y-auto"
+      :class="{ 'flex justify-center items-center': !currentListData.length, 'pt-[5px]': searchVal }">
       <template v-for="item in currentListData" :key="item.id">
-        <ListItem :showCheck="showCheck" @item-click="changeListData" :data="item" :tab-data="type"
-          @selectedCallback="pushCheckData" @selectData="insetResultData" />
+        <ListItem :searchVal="searchVal" :showCheck="showCheck" @item-click="changeListData" :data="item"
+          :tab-data="type" @selectedCallback="pushCheckData" @selectData="insetResultData" />
       </template>
-      <EmptyPanel v-if="!currentListData.length" />
+      <EmptyPanel v-if="!currentListData.length" :text="searchVal ? '没有搜索到该关键字的数据' : '暂无数据'" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, inject, onMounted, computed } from 'vue';
-import { DeptDataType, RoleDataType, SelectOrgInfoProps, StaffDataType } from '../type.ts';
+import { ref, inject, computed, watchEffect } from 'vue';
+import { DeptDataType, RoleDataType, SelectOrgInfoProps, StaffDataType, ResultListType } from '../type.ts';
 import ListItem from '../listItem/index.vue';
 import BreadInfo from '../common/bread.vue';
-import { makeListData, serializeStaffData, flattenDepartments } from '../util/index.ts';
+import { makeListData, serializeStaffData, flattenDepartments, searchTabStaff, searchTabDept, searchTabRole } from '../util/index.ts';
 import { TabDataEnum } from '../enum';
 import EmptyPanel from '../common/empty.vue';
 import { SelectedCallbackType } from '../listItem/index.vue';
@@ -31,6 +31,7 @@ const resultListStore = useResultListStore();
 
 interface IProps {
   type: TabDataEnum;
+  searchVal?: string;
 }
 
 /**
@@ -47,7 +48,7 @@ const deptFlatMap = inject<Map<string, DeptDataType>>('deptFlatMap');
 // 偏平化的角色数据
 const roleFlatMap = inject<Map<string, RoleDataType>>('roleFlatMap');
 // 当前列表数据信息
-const currentListData = ref<Array<DeptDataType | StaffDataType | RoleDataType>>([]);
+const currentListData = ref<Array<ResultListType>>([]);
 // 面包屑数据信息
 const breadDataList = ref<Array<DeptDataType>>([]);
 // 是否显示选择区域 在角色的情况下第一级不显示选择，代表第一级不可被选择
@@ -64,7 +65,7 @@ const showAllMultiple = computed(() => {
   // 员工首页不展示多选
   // 因为在此基础上，点击部门选择时会把所有的子级员工都选中
   // 所有在此优化为员工首页不允许进行全部选择的操作
-  if (currentProps.type === TabDataEnum.staff) {
+  if (currentProps.type === TabDataEnum.staff && !currentProps.searchVal) {
     return breadDataList.value.length > 1 && propsData?.multiple;
   }
   return propsData?.multiple;
@@ -101,35 +102,6 @@ const handleBreadDataList = (data: DeptDataType | RoleDataType) => {
 };
 
 /**
- * 初始化
- */
-onMounted(() => {
-  // 处理不同 tab 下的数据结构
-  if (currentProps.type === TabDataEnum.role) {
-    // 角色tab 数据
-    handleCurrentListData(propsData?.roleData?.id, propsData?.roleData?.children);
-    propsData?.roleData && handleBreadDataList(propsData?.roleData);
-  } else if (currentProps.type === TabDataEnum.department) {
-    // 部门tab 数据
-    let _deptData = propsData?.deptData;
-    _deptData = {
-      id: 'allCompany',
-      name: '公司',
-      children: propsData?.deptData && [propsData?.deptData]
-    };
-    _deptData && handleBreadDataList(_deptData);
-    if (_deptData?.children?.length === 1) {
-      handleBreadDataList(_deptData?.children[0]);
-      handleCurrentListData(_deptData?.children[0].id, _deptData?.children[0].children);
-    }
-  } else {
-    // 人员tab 数据
-    handleCurrentListData(propsData?.deptData?.id, propsData?.deptData?.children);
-    propsData?.deptData && handleBreadDataList(propsData?.deptData);
-  }
-});
-
-/**
  * 处理当前列表数据
  */
 const changeListData = (itemData: DeptDataType | StaffDataType) => {
@@ -142,7 +114,7 @@ const changeListData = (itemData: DeptDataType | StaffDataType) => {
 /**
  * 往结果集合里增加数据
  */
-const insetResultData = (data: DeptDataType | StaffDataType | RoleDataType, isIndeterminate: boolean, altKey: boolean = false) => {
+const insetResultData = (data: ResultListType, isIndeterminate: boolean, altKey: boolean = false) => {
   const multiple = propsData?.multiple || false;
   // 在部门情况下 多选，并且是按住altKey时，把当前部门和所有子级都进行添加
   if (currentProps.type === TabDataEnum.department && multiple && altKey) {
@@ -166,5 +138,94 @@ const selectAll = () => {
     insetResultData(item, isIndeterminate.value);
   });
 };
+
+/**
+ * 配置人员 tab 下的数据
+ */
+const makeStaffData = () => {
+  // 搜索
+  if (currentProps.searchVal) {
+    currentListData.value = searchTabStaff(propsData?.staffData, deptFlatMap, currentProps.searchVal, propsData?.multiple);
+    return;
+  }
+  // 人员tab 数据
+  handleCurrentListData(propsData?.deptData?.id, propsData?.deptData?.children);
+  // 在有搜索的状态下，不显示面包屑，所以也不组装面包屑数据
+  propsData?.deptData && handleBreadDataList(propsData?.deptData);
+};
+
+/**
+ * 组装部门数据
+ */
+const makeDeptData = () => {
+  // 搜索
+  if (currentProps.searchVal) {
+    currentListData.value = searchTabDept(deptFlatMap, currentProps.searchVal);
+    return;
+  }
+  // 部门tab 数据
+  let _deptData = propsData?.deptData;
+  _deptData = {
+    id: 'allCompany',
+    name: '公司',
+    children: propsData?.deptData && [propsData?.deptData]
+  };
+  _deptData && handleBreadDataList(_deptData);
+  if (_deptData?.children?.length === 1) {
+    handleBreadDataList(_deptData?.children[0]);
+    handleCurrentListData(_deptData?.children[0].id, _deptData?.children[0].children);
+  }
+};
+
+/**
+ * 角色数量
+ */
+const makeRoleData = () => {
+  // 搜索
+  if (currentProps.searchVal) {
+    currentListData.value = searchTabRole(roleFlatMap, currentProps.searchVal);
+    return;
+  }
+  // 角色tab 数据
+  handleCurrentListData(propsData?.roleData?.id, propsData?.roleData?.children);
+  propsData?.roleData && handleBreadDataList(propsData?.roleData);
+};
+
+
+/**
+ * 配置当前 panel 的数据
+ */
+const makePanelData = () => {
+  // 处理不同 tab 下的数据结构
+  switch (currentProps.type) {
+    case TabDataEnum.staff:
+      makeStaffData();
+      break;
+    case TabDataEnum.department:
+      makeDeptData();
+      break;
+    case TabDataEnum.role:
+      makeRoleData();
+      break;
+    default:
+      console.log('未知的tab类型：', currentProps.type);
+      break;
+  }
+};
+
+
+/**
+ * 作为初始化的动作
+ * 当有搜索字符试，切换面板的时候，重新组装数据
+ * 并且都是搜索状态
+ */
+watchEffect(() => {
+  console.log('搜索的字符：', currentProps.searchVal);
+  if (currentProps.searchVal) {
+    breadDataList.value = [];
+    itemsCheckMap.value.clear();
+  }
+  makePanelData();
+});
 
 </script>
