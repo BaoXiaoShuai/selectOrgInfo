@@ -5,13 +5,14 @@
       <el-checkbox v-model="isSelectedAll" :indeterminate="isIndeterminate" @change="selectAll"
         class="!h-[25px] flex items-center">全选</el-checkbox>
     </div>
-    <div class="w-full flex-1 overflow-x-hidden overflow-y-auto"
+    <div class="w-full flex-1 overflow-hidden"
       :class="{ 'flex justify-center items-center': !currentListData.length, 'pt-[5px]': searchVal }">
-      <template v-for="item in currentListData" :key="item.id">
+      <RecycleScroller v-if="currentListData.length > 0" :style="{ height: '100%' }" :items="currentListData"
+        :item-size="50" key-field="id" v-slot="{ item }">
         <ListItem :searchVal="searchVal" :showCheck="showCheck" @item-click="changeListData" :data="item"
           :tab-data="type" @selectedCallback="pushCheckData" @selectData="insetResultData" />
-      </template>
-      <EmptyPanel v-if="!currentListData.length" :text="searchVal ? '没有搜索到该关键字的数据' : '暂无数据'" />
+      </RecycleScroller>
+      <EmptyPanel v-else :text="searchVal ? '没有搜索到该关键字的数据' : '暂无数据'" />
     </div>
   </div>
 </template>
@@ -26,6 +27,8 @@ import { TabDataEnum } from '../enum';
 import EmptyPanel from '../common/empty.vue';
 import { SelectedCallbackType } from '../listItem/index.vue';
 import { useResultListStore } from '../store/resultList';
+// 虚拟列表组件
+import { RecycleScroller } from 'vue-virtual-scroller';
 // store
 const resultListStore = useResultListStore();
 

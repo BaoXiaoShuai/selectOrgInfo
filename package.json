@@ -4,7 +4,15 @@
   "description": "通过该组件选择组织信息，包括人员、部门、角色",
   "main": "dist/select-org-info.umd.js",
   "type": "module",
-  "keywords": ["select-org-info", "组织信息", "组织", "人员", "部门", "角色","组织架构"],
+  "keywords": [
+    "select-org-info",
+    "组织信息",
+    "组织",
+    "人员",
+    "部门",
+    "角色",
+    "组织架构"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
@@ -12,7 +20,7 @@
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
-    "access": "public" 
+    "access": "public"
   },
   "dependencies": {
     "element-plus": "^2.7.6",
@@ -20,7 +28,8 @@
     "radash": "^12.1.0",
     "scss": "^0.2.4",
     "ts-node": "^10.9.2",
-    "vue": "^3.4.29"
+    "vue": "^3.4.29",
+    "vue-virtual-scroller": "^2.0.0-beta.8"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.5",

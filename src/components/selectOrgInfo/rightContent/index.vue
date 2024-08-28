@@ -18,10 +18,10 @@
           清空
         </el-button>
       </div>
-      <div class="w-full h-less50 overflow-x-hidden overflow-y-auto">
-        <template v-for="item in listData" :key="item.id">
+      <div class="w-full h-less50 overflow-hidden">
+        <RecycleScroller :style="{ height: '100%' }" :items="listData" :item-size="50" key-field="id" v-slot="{ item }">
           <ListItem :data="item" isResultShow />
-        </template>
+        </RecycleScroller>
       </div>
     </template>
   </div>
@@ -34,6 +34,8 @@ import ListItem from '../listItem/index.vue';
 import { SelectOrgInfoProps, ResultListType } from '../type.ts';
 import EmptyPanel from '../common/empty.vue';
 import { TabDataEnum } from '../enum';
+// 虚拟列表组件
+import { RecycleScroller } from 'vue-virtual-scroller';
 
 // 整体的 props 数据
 const propsData = inject<SelectOrgInfoProps>('propsData');
