@@ -11,6 +11,9 @@ mock 数据结构在 mock 文件夹下有示例
 #### 框架
 **vite + vue3 + ts + element-plus**
 
+#### 仓库地址
+**https://github.com/BaoXiaoShuai/selectOrgInfo**
+
 #### 开始使用
 ```
 >  npm i select-org-info
